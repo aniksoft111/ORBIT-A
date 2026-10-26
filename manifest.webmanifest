@@ -1,0 +1,17 @@
+{
+  "name": "Orbit — Student Command Center",
+  "short_name": "Orbit",
+  "description": "Plan, focus, learn, and teach from one student workspace.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#635bff",
+  "icons": [
+    {
+      "src": "orbit-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

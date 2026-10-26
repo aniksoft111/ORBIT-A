@@ -1,0 +1,2890 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Orbit is a focused student command center for planning, learning, and teaching.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Orbit — Student Command Center</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --surface: rgba(255, 255, 255, .88);
+      --text: #132039;
+      --muted: #6c788e;
+      --line: #e4e8f1;
+      --primary: #635bff;
+      --primary-2: #8b5cf6;
+      --green: #20b486;
+      --orange: #ff9f43;
+      --red: #ef6262;
+      --blue: #3294ff;
+      --shadow: 0 18px 45px rgba(40, 52, 82, .1);
+      --sidebar: #111827;
+      --sidebarText: #d8dfef;
+      --input: #f7f8fc;
+      --glow: rgba(99, 91, 255, .16);
+    }
+
+    body.dark {
+      --bg: #0b1020;
+      --surface: rgba(20, 29, 49, .92);
+      --text: #edf2ff;
+      --muted: #9aa6bd;
+      --line: #2b3650;
+      --primary: #9a93ff;
+      --primary-2: #b185ff;
+      --green: #4ed8aa;
+      --orange: #ffb45e;
+      --red: #ff7b7b;
+      --blue: #67b2ff;
+      --shadow: 0 18px 45px rgba(0, 0, 0, .26);
+      --sidebar: #080d19;
+      --sidebarText: #c3cce0;
+      --input: #151e32;
+      --glow: rgba(154, 147, 255, .18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      background: var(--bg);
+      font: 14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      transition: background .35s, color .35s;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 248px 1fr;
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 24px 14px;
+      color: var(--sidebarText);
+      background: var(--sidebar);
+    }
+
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 0 12px 24px;
+      font-size: 20px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -.6px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #8b7cff, #4f46e5);
+      box-shadow: 0 8px 18px rgba(94, 88, 255, .35);
+    }
+
+    .nav-label {
+      margin: 18px 12px 7px;
+      color: #8592aa;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: var(--sidebarText);
+      background: transparent;
+      text-align: left;
+      transition: .2s;
+    }
+
+    .nav:hover,
+    .nav.active {
+      color: white;
+      background: rgba(255, 255, 255, .09);
+      transform: translateX(2px);
+    }
+
+    .nav .ico {
+      width: 20px;
+      text-align: center;
+    }
+
+    .side-bottom {
+      margin: 24px 5px 0;
+      padding: 14px;
+      border-radius: 14px;
+      background: linear-gradient(150deg, rgba(124, 113, 255, .25), rgba(124, 113, 255, .05));
+    }
+
+    .side-bottom strong {
+      display: block;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .side-bottom p {
+      margin: 0 0 10px;
+      color: #b8c1d5;
+      font-size: 12px;
+    }
+
+    .side-bottom button {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 8px;
+      color: #37307e;
+      background: white;
+      font-weight: 700;
+    }
+
+    main {
+      min-width: 0;
+      padding: 26px clamp(18px, 3vw, 44px) 44px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .greeting h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 30px);
+      letter-spacing: -1px;
+    }
+
+    .greeting p {
+      margin: 3px 0 0;
+      color: var(--muted);
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .icon-btn,
+    .pill-btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 11px;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .02);
+      transition: .2s;
+    }
+
+    .icon-btn:hover,
+    .pill-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .audio-wrap {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 37px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 30px;
+      background: #a4afc1;
+      transition: .25s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      width: 14px;
+      height: 14px;
+      left: 3px;
+      bottom: 3px;
+      border-radius: 50%;
+      background: #fff;
+      transition: .25s;
+    }
+
+    .switch input:checked+.slider {
+      background: var(--primary);
+    }
+
+    .switch input:checked+.slider:before {
+      transform: translateX(17px);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .search {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      padding: 12px 0;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .primary {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 15px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 8px 20px var(--glow);
+      font-weight: 700;
+      transition: .2s;
+    }
+
+    .primary:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+
+    .section {
+      display: none;
+      animation: enter .38s ease both;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes enter {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin: 0 0 14px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -.5px;
+    }
+
+    .section-title p {
+      margin: 2px 0 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .dashboard-main {
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, .8fr);
+      margin-top: 16px;
+    }
+
+    .two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .stat {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat:after {
+      content: "";
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      right: -25px;
+      bottom: -35px;
+      border-radius: 50%;
+      background: var(--glow);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stat-value {
+      margin: 5px 0 3px;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .trend {
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .card-head h3 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .tiny {
+      font-size: 12px;
+    }
+
+    .link {
+      border: 0;
+      padding: 0;
+      color: var(--primary);
+      background: transparent;
+      font-weight: 700;
+    }
+
+    .goal-wrap {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .ring {
+      --pct: 65;
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) calc(var(--pct)*1%), var(--line) 0);
+      position: relative;
+    }
+
+    .ring:before {
+      content: "";
+      position: absolute;
+      width: 87px;
+      height: 87px;
+      border-radius: 50%;
+      background: var(--surface);
+    }
+
+    .ring span {
+      z-index: 1;
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .goal-copy strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .goal-copy p {
+      color: var(--muted);
+      margin: 4px 0 12px;
+    }
+
+    .progress {
+      overflow: hidden;
+      height: 8px;
+      border-radius: 100px;
+      background: var(--line);
+    }
+
+    .progress i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      transition: width .4s;
+    }
+
+    .todo-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .todo {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 11px;
+      background: var(--input);
+      transition: .25s;
+    }
+
+    .todo:hover {
+      transform: translateX(3px);
+    }
+
+    .todo.done {
+      opacity: .55;
+    }
+
+    .todo.done .todo-title {
+      text-decoration: line-through;
+    }
+
+    .check {
+      width: 19px;
+      height: 19px;
+      accent-color: var(--primary);
+    }
+
+    .todo-title {
+      font-weight: 700;
+    }
+
+    .todo-meta {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .todo-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .mini {
+      border: 0;
+      border-radius: 7px;
+      padding: 6px 8px;
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .mini:hover {
+      color: var(--primary);
+      background: var(--glow);
+    }
+
+    .chart {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      height: 155px;
+      padding-top: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: end;
+      gap: 7px;
+      height: 100%;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .bar {
+      width: min(28px, 100%);
+      min-height: 8px;
+      border-radius: 7px 7px 2px 2px;
+      background: linear-gradient(180deg, var(--primary-2), var(--primary));
+      transition: height .6s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .bar-col.today .bar {
+      background: linear-gradient(180deg, var(--green), #1b9c76);
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 10px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 4px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    .dot.green {
+      background: var(--green);
+    }
+
+    .focus-card {
+      color: white;
+      border: 0;
+      background: linear-gradient(145deg, #5d55e8, #8c64d9);
+    }
+
+    .focus-card .muted {
+      color: #dddafa;
+    }
+
+    .timer {
+      margin: 8px 0;
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .focus-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .focus-controls button {
+      flex: 1;
+      border: 0;
+      border-radius: 9px;
+      padding: 10px;
+      color: #4f47c8;
+      background: white;
+      font-weight: 800;
+    }
+
+    .focus-controls button.secondary {
+      color: white;
+      background: rgba(255, 255, 255, .18);
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      font-size: 12px;
+    }
+
+    .range-row input {
+      flex: 1;
+      accent-color: white;
+    }
+
+    .heatmap {
+      display: grid;
+      grid-template-columns: repeat(14, 1fr);
+      gap: 5px;
+    }
+
+    .heat {
+      aspect-ratio: 1;
+      border-radius: 3px;
+      background: var(--line);
+    }
+
+    .heat.l1 {
+      background: rgba(99, 91, 255, .25)
+    }
+
+    .heat.l2 {
+      background: rgba(99, 91, 255, .5)
+    }
+
+    .heat.l3 {
+      background: var(--primary)
+    }
+
+    .heat.l4 {
+      background: var(--green)
+    }
+
+    .heat-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .quick-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .quick {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 128px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      text-align: left;
+      transition: .25s;
+    }
+
+    .quick:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+    }
+
+    .quick-icon {
+      font-size: 23px;
+    }
+
+    .quick small {
+      color: var(--muted);
+    }
+
+    .assignment {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .assignment:last-child {
+      border: 0
+    }
+
+    .datebox {
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 42px;
+      height: 45px;
+      border-radius: 10px;
+      color: var(--primary);
+      background: var(--glow);
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.05;
+    }
+
+    .datebox b {
+      font-size: 17px
+    }
+
+    .assignment-grow {
+      flex: 1;
+      min-width: 0
+    }
+
+    .assignment-grow strong {
+      display: block
+    }
+
+    .tag {
+      padding: 4px 7px;
+      border-radius: 100px;
+      background: var(--input);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700
+    }
+
+    .notes-layout {
+      grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    .note-list {
+      display: grid;
+      gap: 7px;
+    }
+
+    .note-item {
+      width: 100%;
+      padding: 11px;
+      border: 0;
+      border-radius: 10px;
+      color: var(--text);
+      background: transparent;
+      text-align: left;
+    }
+
+    .note-item:hover,
+    .note-item.active {
+      background: var(--glow);
+      color: var(--primary)
+    }
+
+    .note-item small {
+      display: block;
+      color: var(--muted);
+      margin-top: 3px
+    }
+
+    .note-editor textarea {
+      width: 100%;
+      min-height: 260px;
+      resize: vertical;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      background: transparent;
+      line-height: 1.7
+    }
+
+    .note-title {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      padding: 3px 0;
+      color: var(--text);
+      background: transparent;
+      font-size: 22px;
+      font-weight: 800
+    }
+
+    .assignment-form,
+    .setting-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .assignment-form input,
+    .assignment-form select,
+    .field {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: var(--text);
+      background: var(--input);
+      outline: 0;
+    }
+
+    .setting-list {
+      display: grid;
+      gap: 0
+    }
+
+    .setting-row {
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .setting-row:last-child {
+      border: 0
+    }
+
+    .setting-row strong {
+      display: block
+    }
+
+    .setting-row p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .gpa-layout {
+      grid-template-columns: 1.1fr .9fr;
+    }
+
+    .grade-row {
+      display: grid;
+      grid-template-columns: minmax(80px, 1fr) 90px 76px auto;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .gpa-number {
+      font-size: 55px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -3px
+    }
+
+    .grade-table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    .grade-table td {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .elements {
+      display: grid;
+      grid-template-columns: repeat(18, minmax(31px, 1fr));
+      gap: 4px;
+    }
+
+    .element {
+      aspect-ratio: 1;
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      background: var(--surface);
+      font-size: 10px;
+      font-weight: 800;
+      transition: .2s;
+    }
+
+    .element:hover,
+    .element.active {
+      color: white;
+      background: var(--primary);
+      border-color: var(--primary);
+      transform: scale(1.12);
+      z-index: 2
+    }
+
+    .element.empty {
+      visibility: hidden
+    }
+
+    .chem-layout {
+      grid-template-columns: minmax(0, 1.8fr) minmax(210px, .7fr)
+    }
+
+    .atom-wrap {
+      display: grid;
+      place-items: center;
+      min-height: 248px
+    }
+
+    .atom {
+      position: relative;
+      width: 185px;
+      height: 185px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      animation: spin 9s linear infinite
+    }
+
+    .atom:before,
+    .atom:after {
+      content: "";
+      position: absolute;
+      inset: 24px;
+      border: 1px solid var(--primary);
+      border-radius: 50%;
+      transform: rotate(60deg)
+    }
+
+    .atom:after {
+      transform: rotate(120deg)
+    }
+
+    .nucleus {
+      position: absolute;
+      inset: 65px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: white;
+      background: var(--primary);
+      box-shadow: 0 0 28px var(--primary);
+      font-size: 25px;
+      font-weight: 800;
+      z-index: 2
+    }
+
+    .electron {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green)
+    }
+
+    .e1 {
+      top: 9px;
+      left: 87px
+    }
+
+    .e2 {
+      bottom: 21px;
+      right: 24px
+    }
+
+    .e3 {
+      bottom: 20px;
+      left: 25px
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .element-info h3 {
+      margin: 0;
+      font-size: 24px
+    }
+
+    .element-info p {
+      color: var(--muted)
+    }
+
+    .flashcard {
+      min-height: 295px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background: linear-gradient(145deg, var(--surface), var(--glow));
+    }
+
+    .flashcard h3 {
+      max-width: 600px;
+      font-size: clamp(20px, 3vw, 29px);
+      letter-spacing: -.7px
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+      margin-top: 12px
+    }
+
+    .option {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--text);
+      background: var(--surface);
+      font-weight: 700;
+      transition: .2s
+    }
+
+    .option:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px)
+    }
+
+    .option.correct {
+      color: #fff;
+      background: var(--green);
+      border-color: var(--green)
+    }
+
+    .option.wrong {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red)
+    }
+
+    .flash-feedback {
+      height: 21px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-weight: 700
+    }
+
+    .sound-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .sound {
+      min-height: 145px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      text-align: left;
+      overflow: hidden;
+      transition: .25s;
+    }
+
+    .sound:hover {
+      transform: translateY(-3px)
+    }
+
+    .sound-color {
+      height: 64px;
+      background: linear-gradient(135deg, #3d73d2, #68b8f4)
+    }
+
+    .sound:nth-child(2) .sound-color {
+      background: linear-gradient(135deg, #684fcf, #b37ee8)
+    }
+
+    .sound:nth-child(3) .sound-color {
+      background: linear-gradient(135deg, #1d917c, #66d4ad)
+    }
+
+    .sound:nth-child(4) .sound-color {
+      background: linear-gradient(135deg, #c27135, #efa65f)
+    }
+
+    .sound-text {
+      padding: 11px
+    }
+
+    .sound-text strong {
+      display: block
+    }
+
+    .sound.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--glow), var(--shadow)
+    }
+
+    .achievements {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .achievement {
+      text-align: center;
+    }
+
+    .badge-art {
+      display: grid;
+      place-items: center;
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 10px;
+      border-radius: 20px;
+      background: var(--glow);
+      font-size: 27px
+    }
+
+    .achievement.locked {
+      opacity: .45;
+      filter: grayscale(1)
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 30;
+      max-width: 300px;
+      padding: 12px 15px;
+      border-radius: 11px;
+      color: white;
+      background: #1d2940;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, .25);
+      transform: translateY(90px);
+      opacity: 0;
+      transition: .3s;
+    }
+
+    .toast.show {
+      transform: none;
+      opacity: 1
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      overflow: auto;
+      padding: 24px;
+      background: radial-gradient(circle at 18% 20%, rgba(105, 94, 255, .4), transparent 35%), radial-gradient(circle at 85% 78%, rgba(44, 200, 160, .23), transparent 32%), #090e1c;
+    }
+
+    .auth-gate.hidden {
+      display: none
+    }
+
+    .auth-card {
+      width: min(1050px, 100%);
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 26px;
+      color: #eef2ff;
+      background: rgba(18, 27, 49, .9);
+      box-shadow: 0 38px 100px rgba(0, 0, 0, .45)
+    }
+
+    .auth-hero {
+      position: relative;
+      min-height: 530px;
+      padding: clamp(28px, 5vw, 58px);
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(111, 98, 255, .9), rgba(31, 47, 103, .93))
+    }
+
+    .auth-hero:before,
+    .auth-hero:after {
+      position: absolute;
+      content: "";
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, .21)
+    }
+
+    .auth-hero:before {
+      width: 420px;
+      height: 420px;
+      right: -180px;
+      bottom: -200px
+    }
+
+    .auth-hero:after {
+      width: 280px;
+      height: 280px;
+      left: -130px;
+      top: -120px
+    }
+
+    .auth-hero>* {
+      position: relative;
+      z-index: 1
+    }
+
+    .auth-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 800
+    }
+
+    .auth-eyebrow {
+      display: inline-block;
+      margin-top: 92px;
+      padding: 5px 9px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, .14);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-transform: uppercase
+    }
+
+    .auth-hero h1 {
+      max-width: 510px;
+      margin: 14px 0;
+      font-size: clamp(32px, 4.2vw, 54px);
+      line-height: 1.02;
+      letter-spacing: -2px
+    }
+
+    .auth-hero p {
+      max-width: 440px;
+      color: rgba(255, 255, 255, .78);
+      font-size: 15px
+    }
+
+    .auth-benefits {
+      display: grid;
+      gap: 9px;
+      margin-top: 29px;
+      color: #fff;
+      font-size: 13px
+    }
+
+    .auth-benefits span {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .auth-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(28px, 5vw, 56px);
+      background: #fbfcff;
+      color: #182239
+    }
+
+    .dark .auth-panel {
+      background: #121a2d;
+      color: #f0f3ff
+    }
+
+    .auth-panel h2 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -1px
+    }
+
+    .auth-panel p {
+      color: #6b7590
+    }
+
+    .dark .auth-panel p {
+      color: #aab4ca
+    }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin-top: 20px;
+      border: 1px solid #dce1eb;
+      border-radius: 11px;
+      padding: 13px;
+      color: #17213a;
+      background: white;
+      font-weight: 800;
+      transition: transform .18s, box-shadow .18s
+    }
+
+    .google-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(39, 49, 77, .14)
+    }
+
+    .google-mark {
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 15px;
+      color: #4285f4;
+      background: conic-gradient(#4285f4 0 25%, #34a853 0 50%, #fbbc05 0 75%, #ea4335 0)
+    }
+
+    .auth-status {
+      min-height: 24px;
+      margin-top: 13px;
+      color: #6c7790;
+      font-size: 12px;
+      text-align: center
+    }
+
+    .auth-status.error {
+      color: #c84444
+    }
+
+    .auth-privacy {
+      margin-top: 17px;
+      color: #7d879d;
+      font-size: 11px;
+      text-align: center
+    }
+
+    .auth-locked .app {
+      filter: blur(5px);
+      pointer-events: none;
+      user-select: none
+    }
+
+    .inline-task {
+      display: grid;
+      grid-template-columns: minmax(160px, 1fr) 108px 115px auto;
+      gap: 8px;
+      margin: 0 0 14px;
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--input)
+    }
+
+    .inline-task input,
+    .inline-task select {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px;
+      color: var(--text);
+      background: var(--surface)
+    }
+
+    .inline-task button {
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: white;
+      background: var(--primary);
+      font-weight: 800
+    }
+
+    .task-hint {
+      margin: -5px 0 15px;
+      color: var(--muted);
+      font-size: 11px
+    }
+
+    .multi-chart {
+      width: 100%;
+      min-height: 255px;
+      overflow: visible
+    }
+
+    .multi-chart .grid-line {
+      stroke: var(--line);
+      stroke-width: 1
+    }
+
+    .multi-chart .axis-label {
+      fill: var(--muted);
+      font-size: 11px
+    }
+
+    .multi-chart .series-line {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 5px 8px rgba(0, 0, 0, .12))
+    }
+
+    .multi-chart .series-dot {
+      stroke: var(--surface);
+      stroke-width: 3
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 13px;
+      flex-wrap: wrap;
+      margin-top: 8px
+    }
+
+    .chart-legend span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .chart-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%
+    }
+
+    .atom-wrap {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      min-height: 320px;
+      border: 0;
+      color: inherit;
+      background: transparent
+    }
+
+    .atom-wrap:hover .atom {
+      transform: scale(1.04)
+    }
+
+    .atom {
+      width: min(285px, 80vw);
+      height: min(285px, 80vw);
+      border: 0;
+      background: radial-gradient(circle, rgba(99, 91, 255, .17), transparent 63%);
+      animation: none;
+      isolation: isolate;
+      transition: transform .28s ease
+    }
+
+    .atom:before,
+    .atom:after {
+      display: none
+    }
+
+    .atom .shell {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: var(--size);
+      height: var(--size);
+      border: 1px solid color-mix(in srgb, var(--primary) 38%, transparent);
+      border-radius: 50%;
+      animation: orbit-shell var(--duration) linear infinite;
+      will-change: transform
+    }
+
+    .atom .electron {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: var(--dot);
+      height: var(--dot);
+      margin: calc(var(--dot) / -2);
+      border: 0;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 7px color-mix(in srgb, var(--green) 80%, transparent);
+      transform: rotate(var(--angle)) translateX(var(--radius));
+      transform-origin: center;
+      will-change: transform
+    }
+
+    .atom .nucleus {
+      inset: calc(50% - 35px);
+      width: 70px;
+      height: 70px;
+      font-size: 27px;
+      z-index: 3
+    }
+
+    .atom.is-expanded {
+      transform: scale(1.04)
+    }
+
+    @keyframes orbit-shell {
+      from {
+        transform: translate(-50%, -50%) rotate(0deg)
+      }
+
+      to {
+        transform: translate(-50%, -50%) rotate(360deg)
+      }
+    }
+
+    .sound-canvas {
+      display: block;
+      width: 100%;
+      height: 92px;
+      background: #17243f
+    }
+
+    .sound {
+      position: relative
+    }
+
+    .sound:after {
+      position: absolute;
+      inset: 0;
+      content: "";
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(6, 11, 25, .19))
+    }
+
+    .sound-text {
+      position: relative;
+      z-index: 1
+    }
+
+    .sound-canvas,
+    .sound-text {
+      position: relative;
+      z-index: 1
+    }
+
+    @media(max-width:720px) {
+      .auth-card {
+        grid-template-columns: 1fr
+      }
+
+      .auth-hero {
+        min-height: auto;
+        padding: 30px
+      }
+
+      .auth-eyebrow {
+        margin-top: 36px
+      }
+
+      .auth-hero h1 {
+        font-size: 34px
+      }
+
+      .auth-benefits {
+        display: none
+      }
+
+      .auth-panel {
+        padding: 30px
+      }
+
+      .inline-task {
+        grid-template-columns: 1fr 90px
+      }
+
+      .inline-task select {
+        grid-column: 1/2
+      }
+
+      .inline-task button {
+        grid-column: 2/3;
+        grid-row: 2
+      }
+
+      .multi-chart {
+        min-height: 215px
+      }
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -52px;
+      z-index: 50;
+      padding: 10px 14px;
+      border-radius: 9px;
+      color: white;
+      background: var(--primary);
+      transition: top .2s;
+    }
+
+    .skip-link:focus {
+      top: 12px
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--orange);
+      outline-offset: 3px;
+    }
+
+    .profile-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px 5px 5px;
+      border: 1px solid var(--line);
+      border-radius: 100px;
+      background: var(--surface);
+      font-weight: 700;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--green));
+      font-size: 12px
+    }
+
+    .notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 11px;
+      color: var(--text);
+      background: var(--glow);
+    }
+
+    .notice strong {
+      display: block
+    }
+
+    .notice p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .calendar-shell {
+      overflow: auto;
+    }
+
+    .calendar {
+      min-width: 660px;
+      display: grid;
+      grid-template-columns: 70px repeat(7, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .calendar .cal-head,
+    .calendar .time,
+    .calendar .cal-cell {
+      min-height: 54px;
+      padding: 7px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .calendar .cal-head {
+      min-height: 45px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center
+    }
+
+    .calendar .cal-head.today {
+      color: var(--primary);
+      background: var(--glow)
+    }
+
+    .calendar .time {
+      color: var(--muted);
+      font-size: 10px;
+      text-align: right
+    }
+
+    .calendar .cal-cell {
+      position: relative;
+      background: color-mix(in srgb, var(--surface) 70%, transparent)
+    }
+
+    .cal-event {
+      position: absolute;
+      inset: 5px 4px auto;
+      padding: 4px 5px;
+      border-radius: 5px;
+      color: white;
+      background: var(--primary);
+      font-size: 10px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .cal-event.study {
+      background: var(--green)
+    }
+
+    .cal-event.exam {
+      background: var(--orange)
+    }
+
+    .calendar .empty-event {
+      width: 100%;
+      border: 0;
+      color: var(--muted);
+      background: transparent;
+      font-size: 10px;
+      text-align: left;
+      opacity: 0
+    }
+
+    .cal-cell:hover .empty-event {
+      opacity: 1
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px
+    }
+
+    .toolbar button {
+      min-width: 32px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 6px 8px;
+      color: var(--text);
+      background: var(--input);
+      font-weight: 800
+    }
+
+    .toolbar button:hover {
+      border-color: var(--primary);
+      color: var(--primary)
+    }
+
+    .class-grid {
+      grid-template-columns: 1.15fr .85fr
+    }
+
+    .student {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .student:last-child {
+      border: 0
+    }
+
+    .student .avatar {
+      background: linear-gradient(135deg, var(--blue), var(--primary))
+    }
+
+    .student-grow {
+      flex: 1
+    }
+
+    .student-grow strong {
+      display: block
+    }
+
+    .status-online {
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    .class-post {
+      padding: 13px;
+      border-radius: 11px;
+      background: var(--input);
+      margin-bottom: 9px
+    }
+
+    .class-post p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: rgba(5, 10, 23, .62);
+      backdrop-filter: blur(7px)
+    }
+
+    .modal {
+      width: min(500px, 100%);
+      padding: 24px;
+      border-radius: 19px;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: 0 25px 75px rgba(0, 0, 0, .32);
+      animation: enter .35s ease both
+    }
+
+    .modal h2 {
+      margin: 0;
+      font-size: 25px;
+      letter-spacing: -.8px
+    }
+
+    .modal p {
+      color: var(--muted)
+    }
+
+    .onboarding-steps {
+      display: flex;
+      gap: 5px;
+      margin: 16px 0
+    }
+
+    .onboarding-steps i {
+      flex: 1;
+      height: 4px;
+      border-radius: 4px;
+      background: var(--line)
+    }
+
+    .onboarding-steps i.active {
+      background: var(--primary)
+    }
+
+    .modal .field {
+      width: 100%;
+      margin: 6px 0
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px
+    }
+
+    .chem-tools {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 14px
+    }
+
+    .chem-tools .field {
+      max-width: 250px
+    }
+
+    .atom-facts {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 12px 0
+    }
+
+    .atom-facts div {
+      padding: 9px;
+      border-radius: 8px;
+      background: var(--input)
+    }
+
+    .atom-facts span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px
+    }
+
+    .atom-facts b {
+      font-size: 13px
+    }
+
+    .flash-progress {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 auto 12px;
+      max-width: 400px
+    }
+
+    .flash-progress .progress {
+      flex: 1
+    }
+
+    .sound-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px
+    }
+
+    .sound-controls input {
+      flex: 1;
+      accent-color: var(--primary)
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important
+      }
+    }
+
+    @media(max-width:1100px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .sound-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media(max-width:820px) {
+      .app {
+        grid-template-columns: 1fr
+      }
+
+      aside {
+        position: sticky;
+        z-index: 10;
+        height: auto;
+        padding: 10px 12px;
+        overflow: hidden
+      }
+
+      .brand {
+        padding: 0 4px;
+        display: inline-flex
+      }
+
+      .nav-label,
+      .side-bottom {
+        display: none
+      }
+
+      .navs {
+        display: flex;
+        overflow: auto;
+        gap: 2px;
+        margin-top: 8px
+      }
+
+      .nav {
+        width: auto;
+        white-space: nowrap;
+        padding: 8px
+      }
+
+      .nav .ico {
+        display: none
+      }
+
+      main {
+        padding: 20px 16px
+      }
+
+      .dashboard-main,
+      .two,
+      .notes-layout,
+      .gpa-layout,
+      .chem-layout {
+        grid-template-columns: 1fr
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media(max-width:500px) {
+      header {
+        align-items: flex-start
+      }
+
+      .actions {
+        flex-wrap: wrap;
+        justify-content: end
+      }
+
+      .audio-wrap span {
+        display: none
+      }
+
+      .stats,
+      .quick-grid,
+      .sound-grid,
+      .achievements,
+      .options {
+        grid-template-columns: 1fr
+      }
+
+      .goal-wrap {
+        gap: 13px
+      }
+
+      .ring {
+        width: 94px;
+        height: 94px
+      }
+
+      .ring:before {
+        width: 73px;
+        height: 73px
+      }
+
+      .grade-row {
+        grid-template-columns: 1fr 75px 60px auto
+      }
+
+      .elements {
+        grid-template-columns: repeat(9, minmax(29px, 1fr))
+      }
+
+      .element.empty {
+        display: none
+      }
+
+      .search-row .primary {
+        padding: 11px
+      }
+
+      .timer {
+        font-size: 39px
+      }
+    }
+  </style>
+</head>
+
+<body class="auth-locked">
+  <section class="auth-gate" id="authGate" aria-labelledby="authTitle">
+    <div class="auth-card">
+      <div class="auth-hero">
+        <div class="auth-wordmark"><span class="brand-mark">✦</span> Orbit</div>
+        <span class="auth-eyebrow">Your personal study system</span>
+        <h1 id="authTitle">Make every study hour count.</h1>
+        <p>Plan with intention, focus without friction, and keep your progress safely synced to your own student
+          account.</p>
+        <div class="auth-benefits"><span>✓ Your tasks and notes, private to you</span><span>✓ Live progress across your
+            signed-in devices</span><span>✓ A focused space designed for real learning</span></div>
+      </div>
+      <div class="auth-panel">
+        <span class="tag">Student sign-in</span>
+        <h2>Welcome to Orbit</h2>
+        <p>Sign in with your Google account to enter your private workspace.</p>
+        <button class="google-btn" id="loginWithGoogle"><span class="google-mark">G</span> Continue with Google</button>
+        <div class="auth-status" id="authStatus" role="status">Checking secure connection…</div>
+        <button class="link" id="localPreviewBtn">Open local preview instead</button>
+        <div class="auth-privacy">By continuing, you keep a private study profile linked to your Google sign-in.</div>
+      </div>
+    </div>
+  </section>
+  <a class="skip-link" href="#dashboard">Skip to workspace</a>
+  <div class="app">
+    <aside>
+      <div class="brand"><span class="brand-mark">✦</span> Orbit</div>
+      <div class="nav-label">Workspace</div>
+      <div class="navs">
+        <button class="nav active" data-section="dashboard"><span class="ico">◈</span> Dashboard</button>
+        <button class="nav" data-section="focus"><span class="ico">◴</span> Focus studio</button>
+        <button class="nav" data-section="planner"><span class="ico">✓</span> Planner</button>
+        <button class="nav" data-section="calendar"><span class="ico">▦</span> Calendar</button>
+        <button class="nav" data-section="analytics"><span class="ico">⌁</span> Analytics</button>
+        <button class="nav" data-section="assignments"><span class="ico">▣</span> Assignments</button>
+      </div>
+      <div class="nav-label">Learn</div>
+      <div class="navs">
+        <button class="nav" data-section="notes"><span class="ico">▤</span> Note space</button>
+        <button class="nav" data-section="classroom"><span class="ico">◎</span> Classroom</button>
+        <button class="nav" data-section="gpa"><span class="ico">⌑</span> GPA predictor</button>
+        <button class="nav" data-section="chemistry"><span class="ico">⚛</span> Chemistry</button>
+        <button class="nav" data-section="biology"><span class="ico">◉</span> Biology lab</button>
+        <button class="nav" data-section="sound"><span class="ico">♬</span> Soundscapes</button>
+        <button class="nav" data-section="achievements"><span class="ico">✧</span> Achievements</button>
+        <button class="nav" data-section="settings"><span class="ico">⚙</span> Settings</button>
+      </div>
+      <div class="side-bottom"><strong>Level <span id="sideLevel">1</span> Scholar</strong>
+        <p><span id="xpText">0</span> / 1,000 XP to level 2</p><button data-section="achievements">View rewards</button>
+      </div>
+    </aside>
+    <main>
+      <header>
+        <div class="greeting">
+          <h1 id="pageGreeting">Good evening, Anik ✦</h1>
+          <p id="todayText">Build your consistency, one focused session at a time.</p>
+        </div>
+        <div class="actions">
+          <div class="audio-wrap"><span>Audio FX</span><label class="switch"><input id="audioToggle" type="checkbox"
+                checked><span class="slider"></span></label></div>
+          <button class="icon-btn" id="themeToggle" aria-label="Toggle light or dark mode">☾</button>
+          <button class="icon-btn" id="reminderBtn" aria-label="Set reminder">♧</button>
+          <button class="profile-chip" id="profileBtn" aria-label="Edit study profile"><span class="avatar"
+              id="profileAvatar">A</span><span id="profileName">Anik</span></button>
+          <button class="icon-btn hidden" id="signOutBtn" aria-label="Sign out">↪</button>
+        </div>
+      </header>
+      <div class="search-row">
+        <div class="search"><span>⌕</span><input id="searchInput" placeholder="Search tasks, notes, modules..."
+            aria-label="Search workspace"></div><button class="primary" id="quickAdd">＋ Add task</button>
+      </div>
+
+      <section class="section active" id="dashboard">
+        <div class="grid stats">
+          <div class="card stat">
+            <div class="stat-label">Current streak</div>
+            <div class="stat-value"><span id="streakValue">0</span> days 🔥</div>
+            <div class="trend">Build your first study rhythm</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Focus time today</div>
+            <div class="stat-value"><span id="focusToday">2h 15m</span></div>
+            <div class="trend">↑ 18% from yesterday</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Level progress</div>
+            <div class="stat-value">Lv. <span id="levelValue">1</span></div>
+            <div class="trend"><span id="xpLabel">0</span> / 1,000 XP</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Tasks complete</div>
+            <div class="stat-value"><span id="completeCount">4</span> / <span id="taskCount">6</span></div>
+            <div class="trend">Keep the momentum</div>
+          </div>
+        </div>
+        <div class="grid dashboard-main">
+          <div class="grid">
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h3>Daily goal</h3><span class="muted tiny">Deep work & learning target</span>
+                </div><button class="link" data-section="focus">Adjust goal</button>
+              </div>
+              <div class="goal-wrap">
+                <div class="ring" id="goalRing"><span id="goalPct">65%</span></div>
+                <div class="goal-copy"><strong><span id="goalMinutes">156</span> of <span id="goalTarget">240</span>
+                    minutes</strong>
+                  <p>One more focus block will put you ahead of schedule.</p>
+                  <div class="progress"><i id="goalProgress" style="width:65%"></i></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h3>Weekly focus</h3><span class="muted tiny">Hours invested</span>
+                </div><span class="tag">This week</span>
+              </div>
+              <div class="chart" id="weeklyChart"></div>
+              <div class="legend"><span><i class="dot"></i>Focus time</span><span><i class="dot green"></i>Today</span>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h3>Up next</h3><span class="muted tiny">Your priority protocol</span>
+                </div><button class="link" data-section="planner">See all</button>
+              </div>
+              <div class="todo-list" id="dashboardTodos"></div>
+            </div>
+            <div class="card focus-card">
+              <div class="card-head">
+                <div>
+                  <h3>Focus mode</h3><span class="muted">Adjustable Pomodoro</span>
+                </div><span>◉</span>
+              </div>
+              <div class="timer" id="miniTimer">25:00</div>
+              <div class="focus-controls"><button id="miniFocus">Start focus</button><button class="secondary"
+                  data-section="focus">Open studio</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-title" style="margin-top:25px">
+          <div>
+            <h2>Momentum tools</h2>
+            <p>Everything you need for a high-intent study day.</p>
+          </div>
+        </div>
+        <div class="grid quick-grid">
+          <button class="quick" data-section="assignments"><span class="quick-icon">▣</span><strong>Assignment
+              corner</strong><small><span id="assignmentCount">3</span> deadlines ahead</small></button>
+          <button class="quick" data-section="notes"><span class="quick-icon">▤</span><strong>Advanced
+              notes</strong><small>Capture or share with students</small></button>
+          <button class="quick" data-section="chemistry"><span class="quick-icon">⚛</span><strong>Chemistry
+              lab</strong><small>Explore 118 animated atoms</small></button>
+        </div>
+      </section>
+
+      <section class="section" id="focus">
+        <div class="section-title">
+          <div>
+            <h2>Focus studio</h2>
+            <p>Make a promise to your attention.</p>
+          </div><span class="tag">Session count: <span id="sessionCount">3</span></span>
+        </div>
+        <div class="grid two">
+          <div class="card focus-card">
+            <div class="card-head">
+              <div>
+                <h3>Deep focus</h3><span class="muted">No distractions. Just momentum.</span>
+              </div><span id="focusStatus">Ready</span>
+            </div>
+            <div class="timer" id="focusTimer">25:00</div>
+            <div class="focus-controls"><button id="focusStart">Start session</button><button class="secondary"
+                id="focusReset">Reset</button></div>
+            <div class="range-row"><span>Length</span><input type="range" id="focusRange" min="5" max="90" step="5"
+                value="25"><b><span id="focusRangeVal">25</span> min</b></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Focus protocol</h3><span class="muted tiny">A simple ritual before you begin</span>
+              </div><button class="link" id="editProtocol">Edit</button>
+            </div>
+            <div id="protocolText">
+              <p>1. Clear your desk and silence notifications.</p>
+              <p>2. Choose one task only.</p>
+              <p>3. Work until the timer ends. No bargaining.</p>
+            </div>
+            <div class="card-head" style="margin-top:17px">
+              <div>
+                <h3>Ambient layer</h3><span class="muted tiny">Select a soundscape below</span>
+              </div><button class="link" data-section="sound">Browse sounds</button>
+            </div>
+            <div id="ambientNow" class="tag">No soundscape playing</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="planner">
+        <div class="section-title">
+          <div>
+            <h2>Daily planner</h2>
+            <p>Execute it, focus it, or reshape the protocol.</p>
+          </div><button class="primary" id="plannerAdd">＋ New task</button>
+        </div>
+        <div class="grid two">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Today’s to-do list</h3><span class="muted tiny">Add the next small action without leaving your
+                  flow.</span>
+              </div><span class="tag"><span id="plannerRemaining">2</span> remaining</span>
+            </div>
+            <form class="inline-task" id="quickTaskForm"><input id="quickTaskTitle" required autocomplete="off"
+                placeholder="What needs your attention?"><input id="quickTaskMinutes" type="number" min="5" max="480"
+                value="25" aria-label="Estimated minutes"><select id="quickTaskSubject" aria-label="Task subject">
+                <option>Chemistry</option>
+                <option>Biology</option>
+                <option>Mathematics</option>
+                <option>Physics</option>
+                <option>General</option>
+              </select><button>Add task</button></form>
+            <p class="task-hint">Press Enter to add. You can start a focus block or edit the task at any time.</p>
+            <div class="todo-list" id="plannerTodos"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Daily target</h3><span class="muted tiny">Your time investment today</span>
+              </div>
+            </div>
+            <div class="goal-wrap">
+              <div class="ring" id="plannerRing"><span id="plannerPct">65%</span></div>
+              <div class="goal-copy"><strong id="plannerGoalText">156 of 240 minutes</strong>
+                <p>Finish one highlighted task to increase your XP.</p><button class="primary"
+                  data-section="focus">Start focus block</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="calendar">
+        <div class="section-title">
+          <div>
+            <h2>Weekly calendar</h2>
+            <p>See focus, classes, and deadlines in a single, calm view.</p>
+          </div><button class="primary" id="calendarAdd">＋ Plan a block</button>
+        </div>
+        <div class="notice"><span>✦</span>
+          <div><strong>Auto-plan suggestion</strong>
+            <p id="calendarSuggestion">Your next open block is ideal for Organic chemistry review.</p>
+          </div><button class="link" id="applySuggestion">Add it</button>
+        </div>
+        <div class="card calendar-shell">
+          <div class="calendar" id="calendarGrid" aria-label="Weekly study calendar"></div>
+        </div>
+      </section>
+
+      <section class="section" id="analytics">
+        <div class="section-title">
+          <div>
+            <h2>Real-time analytics</h2>
+            <p>Your actions shape these insights as you work.</p>
+          </div><span class="tag">Live ●</span>
+        </div>
+        <div class="grid stats">
+          <div class="card stat">
+            <div class="stat-label">Consistency</div>
+            <div class="stat-value" id="consistencyScore">0%</div>
+            <div class="trend">Build your first study rhythm</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Total focus</div>
+            <div class="stat-value" id="totalFocus">0.0h</div>
+            <div class="trend">This week</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Completion rate</div>
+            <div class="stat-value" id="completionRate">0%</div>
+            <div class="trend">Tasks completed</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Best streak</div>
+            <div class="stat-value"><span id="bestStreak">0</span> days</div>
+            <div class="trend">Personal record</div>
+          </div>
+        </div>
+        <div class="grid two" style="margin-top:16px">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Consistency heatmap</h3><span class="muted tiny">Last 14 weeks · darker = more focus</span>
+              </div>
+            </div>
+            <div class="heatmap" id="heatmap" aria-label="Study consistency heatmap"></div>
+            <div class="heat-labels"><span>Earlier</span><span>Today</span></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Focus distribution</h3><span class="muted tiny">By subject this week</span>
+              </div>
+            </div>
+            <div id="subjectBars"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-head">
+            <div>
+              <h3>Group-work momentum</h3><span class="muted tiny">Compare the real activity of your three most active
+                study groups.</span>
+            </div><span class="tag">Last 7 days</span>
+          </div><svg class="multi-chart" id="groupChart" viewBox="0 0 760 250" role="img"
+            aria-label="Multi-series study activity chart"></svg>
+          <div class="chart-legend" id="groupChartLegend"></div>
+        </div>
+      </section>
+
+      <section class="section" id="assignments">
+        <div class="section-title">
+          <div>
+            <h2>Assignment corner</h2>
+            <p>Keep every deadline visible and actionable.</p>
+          </div>
+        </div>
+        <div class="card">
+          <form class="assignment-form" id="assignmentForm"><input id="assignmentName" required
+              placeholder="Add an assignment"><input id="assignmentDate" type="date" required><select
+              id="assignmentType">
+              <option>Coursework</option>
+              <option>Exam</option>
+              <option>Project</option>
+            </select><button class="primary">Add deadline</button></form>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-head">
+            <div>
+              <h3>Upcoming work</h3><span class="muted tiny">Click Start focus to turn a deadline into action.</span>
+            </div><span class="tag" id="assignmentStatus">0 scheduled</span>
+          </div>
+          <div id="assignmentList"></div>
+        </div>
+      </section>
+
+      <section class="section" id="notes">
+        <div class="section-title">
+          <div>
+            <h2>Note space</h2>
+            <p>Draft class notes, then save and share them with your students.</p>
+          </div><button class="primary" id="newNote">＋ New note</button>
+        </div>
+        <div class="grid notes-layout">
+          <div class="card">
+            <div class="card-head">
+              <h3>Your notes</h3><span class="tag" id="noteCount">2</span>
+            </div>
+            <div class="note-list" id="noteList"></div>
+          </div>
+          <div class="card note-editor">
+            <div class="card-head"><input id="noteTitle" class="note-title" aria-label="Note title">
+              <div><button class="icon-btn" id="saveNote">Save</button><button class="icon-btn"
+                  id="shareNote">Share</button></div>
+            </div>
+            <div class="toolbar" aria-label="Note formatting"><button data-format="bold"
+                aria-label="Bold selection">B</button><button data-format="bullet" aria-label="Add bullet">•
+                List</button><button data-format="heading" aria-label="Add heading">H</button><button
+                data-format="template" aria-label="Insert lesson template">Template</button></div><textarea
+              id="noteBody" placeholder="Write a useful note for your students..."></textarea>
+            <div class="muted tiny">Autosaves locally as you write · Share copies the note to your clipboard.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="classroom">
+        <div class="section-title">
+          <div>
+            <h2>Classroom</h2>
+            <p>A local teaching workspace for sharing lessons and student progress.</p>
+          </div><button class="primary" id="publishLesson">Publish selected note</button>
+        </div>
+        <div class="notice"><span>◎</span>
+          <div><strong>Teaching mode is local in this standalone edition</strong>
+            <p>Published lessons are saved on this device and can be copied or exported for students. Connect a backend
+              to enable student sign-in and live submissions.</p>
+          </div>
+        </div>
+        <div class="grid class-grid">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Class board</h3><span class="muted tiny">Lessons and announcements</span>
+              </div><span class="tag" id="classPostCount">0 posts</span>
+            </div>
+            <div id="classPosts"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Study circle</h3><span class="muted tiny">Local roster preview</span>
+              </div><span class="status-online">● 3 active</span>
+            </div>
+            <div id="studentList"></div><button class="icon-btn" id="startCircle" style="margin-top:12px">Start shared
+              focus</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="gpa">
+        <div class="section-title">
+          <div>
+            <h2>GPA predictor</h2>
+            <p>Model your semester before the final results arrive.</p>
+          </div><button class="primary" id="addCourse">＋ Course</button>
+        </div>
+        <div class="grid gpa-layout">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Course inputs</h3><span class="muted tiny">Credit hours and expected grade</span>
+              </div>
+            </div>
+            <div id="courseRows"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Projected GPA</h3><span class="muted tiny">Weighted by credit hours</span>
+              </div>
+            </div>
+            <div class="gpa-number" id="gpaOutput">3.72</div>
+            <p class="muted">A strong semester. Shift one B+ to an A- and your projection rises to <span
+                id="nextGpa">3.79</span>.</p>
+            <table class="grade-table">
+              <tr>
+                <td>A</td>
+                <td class="muted">4.00</td>
+              </tr>
+              <tr>
+                <td>A−</td>
+                <td class="muted">3.70</td>
+              </tr>
+              <tr>
+                <td>B+</td>
+                <td class="muted">3.30</td>
+              </tr>
+              <tr>
+                <td>B</td>
+                <td class="muted">3.00</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="chemistry">
+        <div class="section-title">
+          <div>
+            <h2>Chemistry explorer</h2>
+            <p>Click an element to inspect an animated 2D atom and its story.</p>
+          </div><span class="tag">118 elements</span>
+        </div>
+        <div class="grid chem-layout">
+          <div class="card">
+            <div class="chem-tools"><input class="field" id="elementSearch"
+                placeholder="Find an element or symbol"><button class="icon-btn"
+                id="clearElementSearch">Clear</button><span class="tag" id="elementMatchCount">118 shown</span></div>
+            <div class="elements" id="periodicTable" aria-label="Interactive periodic table"></div>
+          </div>
+          <div class="card element-info"><button class="atom-wrap" id="atomModel"
+              aria-label="View the selected atom in detail">
+              <div class="atom" id="atomCanvas"><span class="nucleus" id="atomSymbol">H</span></div>
+            </button>
+            <h3 id="elementName">Hydrogen</h3><span class="tag" id="elementNumber">Atomic no. 1</span>
+            <div class="atom-facts">
+              <div><span>Category</span><b id="elementCategory">Nonmetal</b></div>
+              <div><span>Electron shells</span><b id="elementShells">1</b></div>
+            </div>
+            <p id="elementHistory">Discovered by Henry Cavendish in 1766. It is the most abundant chemical substance in
+              the universe.</p><button class="primary" id="randomElement">Explore random element</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="biology">
+        <div class="section-title">
+          <div>
+            <h2>Biology lab</h2>
+            <p>AI-style flashcards that adapt to your next question.</p>
+          </div><span class="tag"><span id="flashScore">0</span> correct</span>
+        </div>
+        <div class="card flashcard">
+          <div><span class="tag" id="flashTopic">Cell biology</span>
+            <div class="flash-progress"><span class="muted tiny">Mastery</span>
+              <div class="progress"><i id="flashProgress" style="width:0%"></i></div><b id="flashMastery">0%</b>
+            </div>
+            <h3 id="flashQuestion">Which organelle is mainly responsible for producing ATP in eukaryotic cells?</h3>
+            <div class="options" id="flashOptions"></div>
+            <p class="flash-feedback" id="flashFeedback">Choose the best answer.</p><button class="link hidden"
+              id="nextFlash">Next adaptive flashcard →</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sound">
+        <div class="section-title">
+          <div>
+            <h2>Soundscapes</h2>
+            <p>Choose a low-distraction atmosphere for study.</p>
+          </div><span class="tag">Generated in-browser</span>
+        </div>
+        <div class="grid sound-grid" id="soundGrid"><button class="sound" data-sound="rain"><canvas class="sound-canvas"
+              data-scene="rain" aria-hidden="true"></canvas>
+            <div class="sound-text"><strong>Rain on glass</strong><span class="muted tiny">Soft noise · 45 min</span>
+            </div>
+          </button><button class="sound" data-sound="lofi"><canvas class="sound-canvas" data-scene="lofi"
+              aria-hidden="true"></canvas>
+            <div class="sound-text"><strong>Lo-fi drift</strong><span class="muted tiny">Warm rhythm · 60 min</span>
+            </div>
+          </button><button class="sound" data-sound="forest"><canvas class="sound-canvas" data-scene="forest"
+              aria-hidden="true"></canvas>
+            <div class="sound-text"><strong>Forest air</strong><span class="muted tiny">Gentle breeze · 30 min</span>
+            </div>
+          </button><button class="sound" data-sound="cafe"><canvas class="sound-canvas" data-scene="cafe"
+              aria-hidden="true"></canvas>
+            <div class="sound-text"><strong>Quiet café</strong><span class="muted tiny">Low ambience · 45 min</span>
+            </div>
+          </button></div>
+        <div class="sound-controls"><span>Volume</span><input id="soundVolume" type="range" min="0" max="100" value="25"
+            aria-label="Soundscape volume"><b id="soundVolumeValue">25%</b><button class="icon-btn"
+            id="stopSound">Stop</button></div>
+      </section>
+
+      <section class="section" id="achievements">
+        <div class="section-title">
+          <div>
+            <h2>Achievements</h2>
+            <p>Small rituals become visible proof of growth.</p>
+          </div><span class="tag"><span id="unlockedCount">4</span> unlocked</span>
+        </div>
+        <div class="grid achievements" id="achievementGrid"></div>
+      </section>
+
+      <section class="section" id="settings">
+        <div class="section-title">
+          <div>
+            <h2>Settings & data</h2>
+            <p>Your workspace is stored safely in this browser.</p>
+          </div>
+        </div>
+        <div class="notice" id="cloudModeNotice">
+          <span>☁</span>
+          <div><strong id="cloudModeTitle">Local preview mode</strong>
+            <p id="cloudModeCopy">Your work is saved only in this browser. Add Firebase configuration to turn on required Google sign-in and private cross-device sync.</p>
+          </div>
+        </div>
+        <div class="grid two">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Cloud sync</h3><span class="muted tiny">The current mode and next action are shown clearly.</span>
+              </div><span class="tag" id="syncStatus">Local only</span>
+            </div>
+            <div class="setting-list">
+              <div class="setting-row">
+                <div><strong id="cloudActionTitle">Local workspace</strong>
+                  <p id="cloudActionCopy">Save in this browser now, or configure Firebase when you are ready for required Google sign-in.</p>
+                </div><button class="primary" id="syncBtn">Save now</button>
+              </div>
+              <div class="setting-row">
+                <div><strong>Daily reminder</strong>
+                  <p id="reminderText">Not scheduled yet</p>
+                </div><button class="icon-btn" id="settingsReminder">Set reminder</button>
+              </div>
+              <div class="setting-row">
+                <div><strong>Appearance</strong>
+                  <p>Use light or dark workspace styling.</p>
+                </div><button class="icon-btn" id="settingsTheme">Toggle theme</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Import & export</h3><span class="muted tiny">Take your data with you.</span>
+              </div>
+            </div>
+            <div class="setting-list">
+              <div class="setting-row">
+                <div><strong>Export workspace</strong>
+                  <p>Download your tasks, notes, assignments, and settings.</p>
+                </div><button class="icon-btn" id="exportBtn">Export</button>
+              </div>
+              <div class="setting-row">
+                <div><strong>Import workspace</strong>
+                  <p>Restore a previously exported Orbit file.</p>
+                </div><label class="icon-btn">Import<input id="importFile" type="file" accept="application/json"
+                    class="hidden"></label>
+              </div>
+              <div class="setting-row">
+                <div><strong>Factory reset</strong>
+                  <p>Erase all locally stored workspace data.</p>
+                </div><button class="icon-btn" id="resetBtn" style="color:var(--red)">Reset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" aria-live="polite"></div>
+  <div class="modal-backdrop hidden" id="onboardingModal" role="dialog" aria-modal="true"
+    aria-labelledby="onboardingTitle">
+    <div class="modal">
+      <span class="tag">Orbit setup</span>
+      <h2 id="onboardingTitle">Let’s shape your study space.</h2>
+      <p id="onboardingCopy">Tell Orbit who you are. You can change this anytime.</p>
+      <div class="onboarding-steps"><i class="active"></i><i></i><i></i></div>
+      <div id="onboardingFields"><input class="field" id="onboardName" placeholder="Your first name"
+          maxlength="28"><select class="field" id="onboardRole">
+          <option value="Student">Student</option>
+          <option value="Teacher">Teacher</option>
+          <option value="Both">Student & teacher</option>
+        </select></div>
+      <div class="modal-actions"><button class="link" id="skipOnboarding">Skip for now</button><button class="primary"
+          id="nextOnboarding">Continue</button></div>
+    </div>
+  </div>
+  <script>
+    const $ = (s, root = document) => root.querySelector(s);
+    const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+    const defaultData = {
+      schemaVersion: 3, theme: 'light', audio: true, streak: 0, bestStreak: 0, lastActiveDate: '', xp: 0, focusMinutes: 0, focusTarget: 240, focusTotal: 0, sessions: 0,
+      reminder: '', activeSound: '', selectedNote: 0, volume: 25,
+      profile: {name: 'Student', role: 'Student', onboarded: false},
+      flashHistory: {correct: 0, answered: 0},
+      classPosts: [],
+      calendar: [],
+      activity: [],
+      tasks: [],
+      assignments: [],
+      notes: [],
+      courses: []
+    };
+    let data = load();
+    const syncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('orbit-workspace') : null;
+    let timer = {seconds: 1500, running: false, interval: null};
+    let audioCtx, soundNode;
+    const flashcards = [
+      {topic: 'Cell biology', q: 'Which organelle is mainly responsible for producing ATP in eukaryotic cells?', a: 'Mitochondrion', choices: ['Nucleus', 'Mitochondrion', 'Ribosome', 'Golgi apparatus']},
+      {topic: 'Genetics', q: 'What is the usual role of messenger RNA?', a: 'Carries genetic instructions from DNA to ribosomes', choices: ['Stores energy for cells', 'Carries genetic instructions from DNA to ribosomes', 'Breaks down proteins', 'Copies chromosomes']},
+      {topic: 'Ecology', q: 'Which term describes organisms that make their own food from sunlight?', a: 'Producers', choices: ['Consumers', 'Decomposers', 'Producers', 'Parasites']},
+      {topic: 'Human physiology', q: 'Where does most gas exchange occur in the lungs?', a: 'Alveoli', choices: ['Bronchi', 'Trachea', 'Alveoli', 'Diaphragm']}
+    ];
+    let flashIndex = 0, flashScore = 0;
+    const elements = [
+      ['H', 'Hydrogen', 'Henry Cavendish isolated hydrogen in 1766. It is the most abundant element in the universe.'], ['He', 'Helium', 'First observed in the Sun’s spectrum in 1868 before being found on Earth.'], ['Li', 'Lithium', 'Named from the Greek word lithos, meaning stone. Discovered in 1817.'], ['Be', 'Beryllium', 'Discovered by Louis-Nicolas Vauquelin in 1798.'], ['B', 'Boron', 'Isolated in 1808 by Gay-Lussac, Thenard, and Humphry Davy.'], ['C', 'Carbon', 'Known since antiquity and the basis of all known life.'], ['N', 'Nitrogen', 'Discovered by Daniel Rutherford in 1772.'], ['O', 'Oxygen', 'Discovered independently by Carl Wilhelm Scheele and Joseph Priestley.'], ['F', 'Fluorine', 'Isolated in 1886 by Henri Moissan after decades of difficult research.'], ['Ne', 'Neon', 'Discovered in 1898 by William Ramsay and Morris Travers.'], ['Na', 'Sodium', 'Isolated by Humphry Davy in 1807 using electrolysis.'], ['Mg', 'Magnesium', 'Named for Magnesia in Greece; isolated by Davy in 1808.'], ['Al', 'Aluminium', 'First isolated by Hans Christian Ørsted in 1825.'], ['Si', 'Silicon', 'Isolated by Jöns Jacob Berzelius in 1824.'], ['P', 'Phosphorus', 'Discovered in 1669 by Hennig Brand while searching for the philosopher’s stone.'], ['S', 'Sulfur', 'Known since antiquity for its vivid color and distinctive odor.'], ['Cl', 'Chlorine', 'Discovered by Carl Wilhelm Scheele in 1774.'], ['Ar', 'Argon', 'Discovered in 1894 by Lord Rayleigh and William Ramsay.'], ['K', 'Potassium', 'Isolated in 1807 by Humphry Davy.'], ['Ca', 'Calcium', 'Isolated by Humphry Davy in 1808.'], ['Sc', 'Scandium', 'Discovered in 1879 by Lars Fredrik Nilson.'], ['Ti', 'Titanium', 'Named for the Titans of Greek mythology.'], ['V', 'Vanadium', 'Named after Vanadis, an old Norse name for Freyja.'], ['Cr', 'Chromium', 'Named from the Greek word for color.'], ['Mn', 'Manganese', 'Isolated by Johan Gottlieb Gahn in 1774.'], ['Fe', 'Iron', 'Known since antiquity and central to human civilization.'], ['Co', 'Cobalt', 'Named after kobold, a German folklore spirit.'], ['Ni', 'Nickel', 'Isolated by Axel Fredrik Cronstedt in 1751.'], ['Cu', 'Copper', 'One of the oldest known metals, used for over 10,000 years.'], ['Zn', 'Zinc', 'Known since antiquity and isolated in 1746 by Andreas Marggraf.'], ['Ga', 'Gallium', 'Discovered by Lecoq de Boisbaudran in 1875.'], ['Ge', 'Germanium', 'Discovered in 1886 and named after Germany.'], ['As', 'Arsenic', 'Known since ancient times.'], ['Se', 'Selenium', 'Discovered by Jöns Jacob Berzelius in 1817.'], ['Br', 'Bromine', 'Discovered in 1826 by Antoine Jérôme Balard.'], ['Kr', 'Krypton', 'Discovered in 1898; its name means hidden one.'], ['Rb', 'Rubidium', 'Discovered by Bunsen and Kirchhoff using spectroscopy.'], ['Sr', 'Strontium', 'Named after Strontian, a Scottish village.'], ['Y', 'Yttrium', 'Named for Ytterby, Sweden, source of several rare earth discoveries.'], ['Zr', 'Zirconium', 'Discovered in 1789 by Martin Heinrich Klaproth.'], ['Nb', 'Niobium', 'Named after Niobe, daughter of Tantalus.'], ['Mo', 'Molybdenum', 'Named from the Greek for lead-like.'], ['Tc', 'Technetium', 'First artificially produced element, in 1937.'], ['Ru', 'Ruthenium', 'Named after Ruthenia, a historical Eastern European region.'], ['Rh', 'Rhodium', 'Named for its rose-colored salts.'], ['Pd', 'Palladium', 'Named after the asteroid Pallas.'], ['Ag', 'Silver', 'Known since antiquity and valued in jewelry and currency.'], ['Cd', 'Cadmium', 'Discovered in 1817 by Friedrich Stromeyer.'], ['In', 'Indium', 'Named after the indigo line in its spectrum.'], ['Sn', 'Tin', 'Known since antiquity; vital to the Bronze Age.'], ['Sb', 'Antimony', 'Known since ancient civilizations.'], ['Te', 'Tellurium', 'Named from the Latin tellus, Earth.'], ['I', 'Iodine', 'Discovered in 1811 by Bernard Courtois.'], ['Xe', 'Xenon', 'Discovered in 1898; its name means stranger.'], ['Cs', 'Cesium', 'Named from its sky-blue spectral lines.'], ['Ba', 'Barium', 'Named from the Greek barys, meaning heavy.'], ['La', 'Lanthanum', 'Discovered in 1839 by Carl Gustaf Mosander.'], ['Ce', 'Cerium', 'Named after the dwarf planet Ceres.'], ['Pr', 'Praseodymium', 'Named from Greek words meaning green twin.'], ['Nd', 'Neodymium', 'Named from Greek words meaning new twin.'], ['Pm', 'Promethium', 'Named after Prometheus; first isolated in 1945.'], ['Sm', 'Samarium', 'Named for the mineral samarskite.'], ['Eu', 'Europium', 'Named after Europe.'], ['Gd', 'Gadolinium', 'Named for Finnish chemist Johan Gadolin.'], ['Tb', 'Terbium', 'Named after Ytterby, Sweden.'], ['Dy', 'Dysprosium', 'Its name means hard to get in Greek.'], ['Ho', 'Holmium', 'Named after Stockholm.'], ['Er', 'Erbium', 'Named after Ytterby, Sweden.'], ['Tm', 'Thulium', 'Named after Thule, a mythical northern land.'], ['Yb', 'Ytterbium', 'Named after Ytterby, Sweden.'], ['Lu', 'Lutetium', 'Named after Lutetia, the Roman name for Paris.'], ['Hf', 'Hafnium', 'Named after Hafnia, the Latin name for Copenhagen.'], ['Ta', 'Tantalum', 'Named after the mythological Tantalus.'], ['W', 'Tungsten', 'Its Swedish name means heavy stone.'], ['Re', 'Rhenium', 'Named after the Rhine River.'], ['Os', 'Osmium', 'Named from Greek osme, smell, for its pungent oxide.'], ['Ir', 'Iridium', 'Named for Iris, goddess of the rainbow.'], ['Pt', 'Platinum', 'Known to South American indigenous peoples long before Europe.'], ['Au', 'Gold', 'Known since antiquity and treasured across cultures.'], ['Hg', 'Mercury', 'Known to ancient civilizations; named after the Roman messenger god.'], ['Tl', 'Thallium', 'Named from the Greek thallos, green shoot.'], ['Pb', 'Lead', 'Known since antiquity and widely used by Romans.'], ['Bi', 'Bismuth', 'One of the first metals described in European writing.'], ['Po', 'Polonium', 'Discovered by Marie and Pierre Curie, named for Poland.'], ['At', 'Astatine', 'Named from Greek astatos, unstable.'], ['Rn', 'Radon', 'Discovered in 1900 by Friedrich Ernst Dorn.'], ['Fr', 'Francium', 'Discovered in 1939 by Marguerite Perey.'], ['Ra', 'Radium', 'Discovered by Marie and Pierre Curie in 1898.'], ['Ac', 'Actinium', 'Discovered in 1899 by André-Louis Debierne.'], ['Th', 'Thorium', 'Named after Thor, the Norse god of thunder.'], ['Pa', 'Protactinium', 'Named for its relationship to actinium.'], ['U', 'Uranium', 'Named after Uranus, discovered in 1789 by Klaproth.'], ['Np', 'Neptunium', 'Named after Neptune; first transuranium element discovered.'], ['Pu', 'Plutonium', 'Named after Pluto; discovered in 1940.'], ['Am', 'Americium', 'Named after the Americas.'], ['Cm', 'Curium', 'Named for Marie and Pierre Curie.'], ['Bk', 'Berkelium', 'Named after Berkeley, California.'], ['Cf', 'Californium', 'Named after California.'], ['Es', 'Einsteinium', 'Named after Albert Einstein.'], ['Fm', 'Fermium', 'Named after Enrico Fermi.'], ['Md', 'Mendelevium', 'Named after Dmitri Mendeleev.'], ['No', 'Nobelium', 'Named after Alfred Nobel.'], ['Lr', 'Lawrencium', 'Named after Ernest Lawrence.'], ['Rf', 'Rutherfordium', 'Named after Ernest Rutherford.'], ['Db', 'Dubnium', 'Named after Dubna, Russia.'], ['Sg', 'Seaborgium', 'Named after Glenn T. Seaborg.'], ['Bh', 'Bohrium', 'Named after Niels Bohr.'], ['Hs', 'Hassium', 'Named after the German state of Hesse.'], ['Mt', 'Meitnerium', 'Named after physicist Lise Meitner.'], ['Ds', 'Darmstadtium', 'Named after Darmstadt, Germany.'], ['Rg', 'Roentgenium', 'Named after Wilhelm Conrad Röntgen.'], ['Cn', 'Copernicium', 'Named after Nicolaus Copernicus.'], ['Nh', 'Nihonium', 'Named after Nihon, the Japanese word for Japan.'], ['Fl', 'Flerovium', 'Named after physicist Georgy Flyorov.'], ['Mc', 'Moscovium', 'Named after the Moscow region.'], ['Lv', 'Livermorium', 'Named after Lawrence Livermore National Laboratory.'], ['Ts', 'Tennessine', 'Named after Tennessee.'], ['Og', 'Oganesson', 'Named after physicist Yuri Oganessian.']
+    ];
+    const electronShells = [
+      '1', '2', '2,1', '2,2', '2,3', '2,4', '2,5', '2,6', '2,7', '2,8',
+      '2,8,1', '2,8,2', '2,8,3', '2,8,4', '2,8,5', '2,8,6', '2,8,7', '2,8,8', '2,8,8,1', '2,8,8,2',
+      '2,8,9,2', '2,8,10,2', '2,8,11,2', '2,8,13,1', '2,8,13,2', '2,8,14,2', '2,8,15,2', '2,8,16,2', '2,8,18,1', '2,8,18,2',
+      '2,8,18,3', '2,8,18,4', '2,8,18,5', '2,8,18,6', '2,8,18,7', '2,8,18,8', '2,8,18,8,1', '2,8,18,8,2', '2,8,18,9,2', '2,8,18,10,2',
+      '2,8,18,12,1', '2,8,18,13,1', '2,8,18,13,2', '2,8,18,15,1', '2,8,18,16,1', '2,8,18,18', '2,8,18,18,1', '2,8,18,18,2', '2,8,18,18,3', '2,8,18,18,4',
+      '2,8,18,18,5', '2,8,18,18,6', '2,8,18,18,7', '2,8,18,18,8', '2,8,18,18,8,1', '2,8,18,18,8,2', '2,8,18,18,9,2', '2,8,18,19,9,2', '2,8,18,21,8,2', '2,8,18,22,8,2',
+      '2,8,18,23,8,2', '2,8,18,24,8,2', '2,8,18,25,8,2', '2,8,18,25,9,2', '2,8,18,27,8,2', '2,8,18,28,8,2', '2,8,18,29,8,2', '2,8,18,30,8,2', '2,8,18,31,8,2', '2,8,18,32,8,2',
+      '2,8,18,32,9,2', '2,8,18,32,10,2', '2,8,18,32,11,2', '2,8,18,32,12,2', '2,8,18,32,13,2', '2,8,18,32,14,2', '2,8,18,32,15,2', '2,8,18,32,17,1', '2,8,18,32,18,1', '2,8,18,32,18,2',
+      '2,8,18,32,18,3', '2,8,18,32,18,4', '2,8,18,32,18,5', '2,8,18,32,18,6', '2,8,18,32,18,7', '2,8,18,32,18,8', '2,8,18,32,18,8,1', '2,8,18,32,18,8,2', '2,8,18,32,18,9,2', '2,8,18,32,18,10,2',
+      '2,8,18,32,20,9,2', '2,8,18,32,21,9,2', '2,8,18,32,22,9,2', '2,8,18,32,24,8,2', '2,8,18,32,25,8,2', '2,8,18,32,25,9,2', '2,8,18,32,27,8,2', '2,8,18,32,28,8,2', '2,8,18,32,29,8,2', '2,8,18,32,30,8,2',
+      '2,8,18,32,31,8,2', '2,8,18,32,32,8,2', '2,8,18,32,32,8,3', '2,8,18,32,32,10,2', '2,8,18,32,32,11,2', '2,8,18,32,32,12,2', '2,8,18,32,32,13,2', '2,8,18,32,32,14,2', '2,8,18,32,32,15,2', '2,8,18,32,32,17,1',
+      '2,8,18,32,32,18,1', '2,8,18,32,32,18,2', '2,8,18,32,32,18,3', '2,8,18,32,32,18,4', '2,8,18,32,32,18,5', '2,8,18,32,32,18,6', '2,8,18,32,32,18,7', '2,8,18,32,32,18,8'
+    ].map(value => value.split(',').map(Number));
+    function hydrate(stored = {}) {const legacyDemo = stored.schemaVersion === undefined && stored.focusMinutes === 156 && Array.isArray(stored.tasks) && stored.tasks.length === 6; const source = legacyDemo ? {} : stored; return {...defaultData, ...source, profile: {...defaultData.profile, ...source.profile}, flashHistory: {...defaultData.flashHistory, ...source.flashHistory}, calendar: Array.isArray(source.calendar) ? source.calendar : defaultData.calendar, activity: Array.isArray(source.activity) ? source.activity : defaultData.activity, classPosts: Array.isArray(source.classPosts) ? source.classPosts : defaultData.classPosts};}
+    function load() {try {return hydrate(JSON.parse(localStorage.getItem('orbit-data')) || {});} catch (e) {return structuredClone(defaultData);} }
+    function save() {localStorage.setItem('orbit-data', JSON.stringify(data)); if (syncChannel) syncChannel.postMessage(data); if (window.orbitCloud?.queueSave) window.orbitCloud.queueSave(data); updateSync(window.orbitCloud?.isReady ? 'Syncing to your account…' : 'Saved locally');}
+    function toast(msg) {const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(window.toastTimer); window.toastTimer = setTimeout(() => t.classList.remove('show'), 2800);}
+    function beep(freq = 620, duration = .06) {if (!data.audio) return; try {const ctx = audioCtx || (audioCtx = new AudioContext()); const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = freq; g.gain.setValueAtTime(.045 * (data.volume / 100), ctx.currentTime); g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + duration); o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime + duration);} catch (e) { } }
+    function setTheme() {document.body.classList.toggle('dark', data.theme === 'dark'); $('#themeToggle').textContent = data.theme === 'dark' ? '☀' : '☾';}
+    function renderProfile() {const p = data.profile || defaultData.profile; const name = p.name || 'Student'; $('#profileName').textContent = name; $('#profileAvatar').textContent = name.slice(0, 1).toUpperCase(); $('#pageGreeting').textContent = 'Good ' + (new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening') + ', ' + name + ' ✦'; $('#todayText').textContent = new Date().toLocaleDateString('en', {weekday: 'long', month: 'long', day: 'numeric'}) + ' · ' + (p.role || 'Student') + ' workspace';}
+    function showSection(id) {$$('.section').forEach(x => x.classList.toggle('active', x.id === id)); $$('.nav').forEach(x => x.classList.toggle('active', x.dataset.section === id)); history.replaceState(null, '', '#' + id); window.scrollTo({top: 0, behavior: 'smooth'});}
+    function renderTodos() {const pending = data.tasks.filter(t => !t.done), target = (t) => '<div class="todo ' + (t.done ? 'done' : '') + '"><input class="check" type="checkbox" ' + (t.done ? 'checked' : '') + ' data-done="' + t.id + '" aria-label="Complete ' + esc(t.title) + '"><div><div class="todo-title">' + esc(t.title) + '</div><div class="todo-meta">' + esc(t.meta) + '</div></div><div class="todo-actions"><button class="mini" data-focus-task="' + t.id + '" aria-label="Start focus">◴</button><button class="mini" data-edit-task="' + t.id + '" aria-label="Edit task">✎</button></div></div>'; $('#plannerTodos').innerHTML = data.tasks.map(target).join(''); $('#dashboardTodos').innerHTML = pending.slice(0, 3).map(target).join('') || '<p class="muted">All clear — add your next intention.</p>'; $('#completeCount').textContent = data.tasks.filter(t => t.done).length; $('#taskCount').textContent = data.tasks.length; $('#plannerRemaining').textContent = pending.length; $('#completionRate').textContent = Math.round((data.tasks.filter(t => t.done).length / Math.max(1, data.tasks.length)) * 100) + '%';}
+    function renderGoal() {const pct = Math.min(100, Math.round(data.focusMinutes / data.focusTarget * 100)), consistency = data.activity.length ? Math.min(99, Math.round((data.activity.filter(a => Number(a.minutes) > 0).length / 7) * 100)) : 0;['goalRing', 'plannerRing'].forEach(id => $('#' + id).style.setProperty('--pct', pct)); $('#goalPct').textContent = $('#plannerPct').textContent = pct + '%'; $('#goalProgress').style.width = pct + '%'; $('#goalMinutes').textContent = data.focusMinutes; $('#goalTarget').textContent = data.focusTarget; $('#plannerGoalText').textContent = data.focusMinutes + ' of ' + data.focusTarget + ' minutes'; $('#focusToday').textContent = Math.floor(data.focusMinutes / 60) + 'h ' + data.focusMinutes % 60 + 'm'; $('#totalFocus').textContent = (data.focusTotal / 60).toFixed(1) + 'h'; $('#consistencyScore').textContent = consistency + '%';}
+    function dateKey(value) {const d = new Date(value); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');}
+    function minutesOn(day) {const key = dateKey(day); return data.activity.reduce((sum, item) => sum + (dateKey(item.date) === key ? Number(item.minutes) || 0 : 0), 0);}
+    function renderChart() {
+      const now = new Date(), days = []; for (let i = 6; i >= 0; i--) {const d = new Date(now); d.setDate(d.getDate() - i); days.push(d);} const vals = days.map(minutesOn), max = Math.max(60, ...vals); $('#weeklyChart').innerHTML = vals.map((v, i) => '<div class="bar-col ' + (i === 6 ? 'today' : '') + '"><div class="bar" style="height:' + (v ? Math.max(8, Math.round(v / max * 100)) : 2) + '%" data-tooltip="' + v + ' minutes"></div><span>' + days[i].toLocaleDateString('en', {weekday: 'narrow'}) + '</span></div>').join('');
+      const totals = {}; data.activity.forEach(a => {const k = a.subject || 'Other'; totals[k] = (totals[k] || 0) + Number(a.minutes || 0)}); const subjects = Object.entries(totals).sort((a, b) => b[1] - a[1]).slice(0, 4), total = subjects.reduce((s, x) => s + x[1], 0) || 1; $('#subjectBars').innerHTML = subjects.map(s => {const pct = Math.round(s[1] / total * 100); return '<div style="margin:14px 0"><div style="display:flex;justify-content:space-between"><span>' + esc(s[0]) + '</span><b>' + pct + '%</b></div><div class="progress" style="margin-top:6px"><i style="width:' + pct + '%"></i></div></div>';}).join('');
+      const series = subjects.slice(0, 3), palette = ['#8b5cf6', '#20b486', '#ff9f43'], chart = $('#groupChart'); if (!chart) return; const values = series.map(([name], n) => ({name, color: palette[n], values: days.map(day => data.activity.filter(a => dateKey(a.date) === dateKey(day) && (a.subject || 'Other') === name).reduce((sum, a) => sum + Number(a.minutes || 0), 0))})); const chartMax = Math.max(30, ...values.flatMap(s => s.values)), left = 52, right = 730, top = 22, bottom = 204, x = i => left + (right - left) * i / 6, y = v => bottom - (bottom - top) * v / chartMax; let svg = '';[0, .25, .5, .75, 1].forEach(p => {const yy = y(chartMax * p); svg += '<line class="grid-line" x1="' + left + '" y1="' + yy + '" x2="' + right + '" y2="' + yy + '"></line><text class="axis-label" x="' + (left - 10) + '" y="' + (yy + 4) + '" text-anchor="end">' + Math.round(chartMax * p) + 'm</text>';}); days.forEach((d, i) => {svg += '<text class="axis-label" x="' + x(i) + '" y="235" text-anchor="middle">' + d.toLocaleDateString('en', {weekday: 'short'}) + '</text>';}); values.forEach(s => {const points = s.values.map((v, i) => x(i) + ',' + y(v)).join(' '); svg += '<polyline class="series-line" points="' + points + '" stroke="' + s.color + '"></polyline>' + s.values.map((v, i) => '<circle class="series-dot" cx="' + x(i) + '" cy="' + y(v) + '" r="4.5" fill="' + s.color + '"><title>' + esc(s.name) + ': ' + v + ' minutes</title></circle>').join('');}); chart.innerHTML = svg || '<text x="380" y="125" text-anchor="middle">Add focus activity to see your group comparison.</text>'; $('#groupChartLegend').innerHTML = values.map(s => '<span><i class="chart-swatch" style="background:' + s.color + '"></i>' + esc(s.name) + '</span>').join('') || '<span>Complete tasks or focus sessions to build your first series.</span>';
+    }
+    function renderHeat() {let cells = ''; const now = new Date(); for (let i = 97; i >= 0; i--) {const d = new Date(now); d.setDate(d.getDate() - i); const minutes = minutesOn(d), level = minutes >= 90 ? 4 : minutes >= 60 ? 3 : minutes >= 30 ? 2 : minutes > 0 ? 1 : 0; cells += '<i class="heat ' + (level ? 'l' + level : '') + '" aria-label="' + d.toLocaleDateString('en', {month: 'short', day: 'numeric'}) + ': ' + minutes + ' minutes"></i>';} $('#heatmap').innerHTML = cells;}
+    function renderCalendar() {const grid = $('#calendarGrid'), now = new Date(), start = new Date(now); start.setDate(now.getDate() - now.getDay()); const days = Array.from({length: 7}, (_, i) => {const d = new Date(start); d.setDate(start.getDate() + i); return d}); let html = '<div class="cal-head"></div>' + days.map((d, i) => '<div class="cal-head ' + (dateKey(d) === dateKey(now) ? 'today' : '') + '">' + d.toLocaleDateString('en', {weekday: 'short'}) + '<br><b>' + d.getDate() + '</b></div>').join(''); for (let hour = 8; hour <= 20; hour += 2) {html += '<div class="time">' + String(hour).padStart(2, '0') + ':00</div>'; days.forEach((d, day) => {const event = data.calendar.find(e => Number(e.day) === day && Number(e.hour) === hour); html += '<div class="cal-cell">' + (event ? '<button class="cal-event ' + esc(event.kind || '') + '" data-calendar-event="' + event.id + '" title="Remove ' + esc(event.title) + '">' + esc(event.title) + '</button>' : '<button class="empty-event" data-calendar-slot="' + day + '|' + hour + '">＋ plan</button>') + '</div>';});} grid.innerHTML = html; const next = data.tasks.find(t => !t.done); $('#calendarSuggestion').textContent = 'Your next open block is ideal for ' + (next ? next.title.toLowerCase() : 'a 25-minute review') + '.';}
+    function renderClassroom() {const posts = data.classPosts || []; $('#classPostCount').textContent = posts.length + ' post' + (posts.length === 1 ? '' : 's'); $('#classPosts').innerHTML = posts.length ? posts.map(p => '<div class="class-post"><strong>' + esc(p.title) + '</strong><p>' + esc(p.preview) + '</p><span class="tag">Published ' + esc(p.when) + '</span></div>').join('') : '<p class="muted">No lessons published yet. Select a note, then publish it to this local class board.</p>'; const students = [['Maya Rahman', 'Reviewing cell biology'], ['Noah Karim', 'In focus mode'], ['Rina Khan', 'Completed chemistry notes']]; $('#studentList').innerHTML = students.map((s, i) => '<div class="student"><span class="avatar">' + s[0][0] + '</span><div class="student-grow"><strong>' + s[0] + '</strong><span class="muted tiny">' + s[1] + '</span></div><span class="status-online">' + (i === 1 ? 'Focus' : 'Online') + '</span></div>').join('');}
+    function renderAssignments() {const list = [...data.assignments].sort((a, b) => a.date.localeCompare(b.date)); $('#assignmentList').innerHTML = list.map(a => {let d = new Date(a.date + 'T12:00:00'); return '<div class="assignment"><div class="datebox"><span>' + d.toLocaleString('en', {month: 'short'}).toUpperCase() + '</span><b>' + d.getDate() + '</b></div><div class="assignment-grow"><strong>' + esc(a.title) + '</strong><span class="muted tiny">' + esc(a.type) + ' · ' + d.toLocaleDateString('en', {weekday: 'long'}) + '</span></div><span class="tag">' + esc(a.type) + '</span><button class="mini" data-assignment-focus="' + a.id + '">Start focus</button><button class="mini" data-delete-assignment="' + a.id + '" aria-label="Delete assignment">×</button></div>';}).join('') || '<p class="muted">No deadlines scheduled. Add your first assignment above.</p>'; $('#assignmentCount').textContent = list.length; $('#assignmentStatus').textContent = list.length + ' scheduled';}
+    function renderNotes() {$('#noteCount').textContent = data.notes.length; const selected = data.notes.find(n => n.id === data.selectedNote) || data.notes[0]; if (selected) data.selectedNote = selected.id; $('#noteList').innerHTML = data.notes.map(n => '<button class="note-item ' + (n.id === data.selectedNote ? 'active' : '') + '" data-note="' + n.id + '"><strong>' + esc(n.title) + '</strong><small>' + esc(n.updated || 'Now') + '</small></button>').join(''); $('#noteTitle').value = selected?.title || ''; $('#noteBody').value = selected?.body || '';}
+    function renderCourses() {const grades = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C']; $('#courseRows').innerHTML = data.courses.map((c, i) => '<div class="grade-row"><input class="field" data-course-name="' + i + '" value="' + esc(c.name) + '" aria-label="Course name"><input class="field" type="number" min="1" max="6" data-course-credit="' + i + '" value="' + c.credits + '" aria-label="Credits"><select class="field" data-course-grade="' + i + '" aria-label="Expected grade">' + grades.map(g => '<option ' + (g === c.grade ? 'selected' : '') + '>' + g + '</option>').join('') + '</select><button class="mini" data-delete-course="' + i + '">×</button></div>').join(''); calcGpa();}
+    function calcGpa() {const points = {A: 4, 'A-': 3.7, 'B+': 3.3, B: 3, 'B-': 2.7, 'C+': 2.3, C: 2}; let credits = 0, total = 0; data.courses.forEach(c => {credits += Number(c.credits); total += (points[c.grade] || 0) * Number(c.credits)}); const g = credits ? (total / credits).toFixed(2) : '0.00'; $('#gpaOutput').textContent = g; $('#nextGpa').textContent = Math.min(4, (+g + .07)).toFixed(2);}
+    function elementCategory(index) {if ([0, 5, 6, 7, 8, 14, 15, 16, 33, 34, 52].includes(index)) return 'Nonmetal'; if ([1, 9, 17, 35, 53, 85, 117].includes(index)) return 'Noble gas'; if (index > 88) return 'Synthetic'; if (index > 56 && index < 71) return 'Lanthanide'; if (index > 88 && index < 103) return 'Actinide'; return index % 5 === 0 ? 'Transition metal' : 'Metal';}
+    function renderElements(query = '') {const q = query.toLowerCase().trim(), selected = Number(data.activeElement || 0); const shown = elements.filter(e => (e[0] + ' ' + e[1]).toLowerCase().includes(q)).length; $('#periodicTable').innerHTML = elements.map((e, i) => '<button class="element ' + (i === selected ? 'active' : '') + ' ' + ((q && !(e[0] + ' ' + e[1]).toLowerCase().includes(q)) ? 'hidden' : '') + '" data-element="' + i + '" title="' + e[1] + '">' + e[0] + '</button>').join(''); $('#elementMatchCount').textContent = shown + ' shown';}
+    function renderAtom(index) {const shells = electronShells[index] || [index + 1], canvas = $('#atomCanvas'); if (!canvas) return; canvas.querySelectorAll('.shell').forEach(n => n.remove()); const maxShells = shells.length; shells.forEach((count, shellIndex) => {const size = Math.max(44, 64 + shellIndex * ((250 - 64) / Math.max(1, maxShells - 1))), radius = Math.max(18, size / 2 - 3), dot = count > 20 ? 3 : count > 12 ? 4 : 5; const shell = document.createElement('span'); shell.className = 'shell'; shell.style.setProperty('--size', size + 'px'); shell.style.setProperty('--duration', (10 + shellIndex * 3) + 's'); shell.style.animationDirection = shellIndex % 2 ? 'reverse' : 'normal'; for (let e = 0; e < count; e++) {const electron = document.createElement('i'); electron.className = 'electron'; electron.style.setProperty('--dot', dot + 'px'); electron.style.setProperty('--radius', radius + 'px'); electron.style.setProperty('--angle', (e / count * 360) + 'deg'); electron.setAttribute('aria-label', 'Electron ' + (e + 1) + ' in shell ' + (shellIndex + 1)); shell.appendChild(electron);} canvas.appendChild(shell);});}
+    function chooseElement(i) {const e = elements[i]; data.activeElement = i; $$('.element').forEach(x => x.classList.toggle('active', Number(x.dataset.element) === i)); $('#atomSymbol').textContent = e[0]; $('#elementName').textContent = e[1]; $('#elementNumber').textContent = 'Atomic no. ' + (i + 1); $('#elementCategory').textContent = elementCategory(i); const shells = electronShells[i] || [i + 1]; $('#elementShells').textContent = shells.join(' · ') + ' electrons'; $('#elementHistory').textContent = e[2]; renderAtom(i); beep(440 + i * 2, .04);}
+    function renderFlash() {const f = flashcards[flashIndex % flashcards.length], history = data.flashHistory || {correct: 0, answered: 0}, mastery = history.answered ? Math.round(history.correct / history.answered * 100) : 0; $('#flashTopic').textContent = f.topic; $('#flashQuestion').textContent = f.q; $('#flashOptions').innerHTML = f.choices.map(x => '<button class="option" data-answer="' + esc(x) + '">' + esc(x) + '</button>').join(''); $('#flashFeedback').textContent = 'Choose the best answer.'; $('#nextFlash').classList.add('hidden'); $('#flashProgress').style.width = mastery + '%'; $('#flashMastery').textContent = mastery + '%';}
+    function renderAchievements() {const count = data.tasks.filter(t => t.done).length; const items = [['🔥', 'First flame', 'Study for 7 days in a row', data.streak >= 7], ['◴', 'Deep diver', 'Complete 3 focus sessions', data.sessions >= 3], ['✓', 'Closer', 'Finish 5 planned tasks', count >= 5], ['⚛', 'Curious mind', 'Explore the chemistry lab', sessionStorage.chemistrySeen === 'yes'], ['✦', 'Level up', 'Earn 1,000 XP', data.xp >= 1000], ['▤', 'Teacher’s desk', 'Share a note with students', sessionStorage.noteShared === 'yes']]; const unlocked = items.filter(x => x[3]).length; $('#unlockedCount').textContent = unlocked; $('#achievementGrid').innerHTML = items.map(x => '<div class="card achievement ' + (x[3] ? '' : 'locked') + '"><div class="badge-art">' + x[0] + '</div><strong>' + x[1] + '</strong><p class="muted tiny">' + x[2] + '</p><span class="tag">' + (x[3] ? 'Unlocked' : 'Locked') + '</span></div>').join('');}
+    function renderGamification() {const level = 1 + Math.floor((data.xp || 0) / 1000); $('#xpLabel').textContent = $('#xpText').textContent = data.xp || 0; $('#levelValue').textContent = $('#sideLevel').textContent = level; $('#streakValue').textContent = data.streak || 0; $('#bestStreak').textContent = data.bestStreak || 0;}
+    function updateXP(amount) {data.xp = Math.min(1500, (data.xp || 0) + amount); renderGamification(); renderAchievements();}
+    function updateSync(status) {const el = $('#syncStatus'); if (el) el.textContent = status;}
+    function renderCloudMode() {const ready = Boolean(window.orbitCloud?.isReady), local = !ready; $('#cloudModeTitle').textContent = local ? 'Local preview mode' : 'Secure cloud sync is active'; $('#cloudModeCopy').textContent = local ? 'Your work is saved in this browser only. Google sign-in and cross-device sync activate automatically after Firebase is configured and you sign in.' : 'Your workspace is privately synced to your signed-in Google account in real time.'; $('#cloudActionTitle').textContent = local ? 'Local workspace' : 'Sync workspace'; $('#cloudActionCopy').textContent = local ? 'Save a local copy now. Use Export to create a portable backup before you switch devices.' : 'Changes save automatically. Use Sync now to create an immediate cloud update.'; $('#syncBtn').textContent = local ? 'Save now' : 'Sync now'; if (local) updateSync('Local only');}
+    function renderAll() {setTheme(); renderProfile(); renderGamification(); renderCloudMode(); $('#audioToggle').checked = data.audio; $('#soundVolume').value = data.volume; $('#soundVolumeValue').textContent = data.volume + '%'; renderTodos(); renderGoal(); renderChart(); renderHeat(); renderCalendar(); renderAssignments(); renderNotes(); renderClassroom(); renderCourses(); renderElements($('#elementSearch')?.value || ''); chooseElement(Number(data.activeElement || 0)); renderFlash(); renderAchievements(); $('#sessionCount').textContent = data.sessions; $('#reminderText').textContent = data.reminder || 'Not scheduled yet';}
+    function esc(v) {return String(v).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));}
+    function subjectFrom(text = '') {const value = text.toLowerCase(); if (value.includes('chem')) return 'Chemistry'; if (value.includes('bio')) return 'Biology'; if (value.includes('math') || value.includes('calculus')) return 'Mathematics'; if (value.includes('phys')) return 'Physics'; return 'Other';}
+    function recordActivity(minutes, subject) {const now = new Date(), today = dateKey(now), last = data.lastActiveDate; if (last !== today) {const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1); data.streak = last === dateKey(yesterday) ? (data.streak || 0) + 1 : 1; data.bestStreak = Math.max(data.bestStreak || 0, data.streak); data.lastActiveDate = today;} data.activity.push({date: now.toISOString(), minutes: Number(minutes) || 0, subject: subject || 'Other'}); if (data.activity.length > 500) data.activity = data.activity.slice(-500); renderGamification();}
+    function addCalendarBlock(day, hour, title, kind = 'study') {data.calendar.push({id: Date.now(), day: Number(day), hour: Number(hour), title, kind}); save(); renderCalendar(); toast('Study block added to your calendar.');}
+    function addTask(title, subject = 'General', minutes = 25) {const clean = String(title || '').trim(); if (!clean) return false; const safeMinutes = Math.max(5, Math.min(480, Number(minutes) || 25)); data.tasks.unshift({id: Date.now(), title: clean, meta: subject + ' · ' + safeMinutes + ' min', done: false}); save(); renderTodos(); toast('Task added to your protocol.'); beep(); return true;}
+    function focusQuickTask() {showSection('planner'); setTimeout(() => $('#quickTaskTitle').focus(), 150);}
+    function editTask(id) {const t = data.tasks.find(x => x.id === id); const title = prompt('Edit task', t.title); if (title !== null) {t.title = title || t.title; t.meta = prompt('Edit protocol', t.meta) || t.meta; save(); renderTodos(); toast('Task protocol updated.');} }
+    function startFocusFor(t) {timer.subject = subjectFrom(t.title + ' ' + (t.meta || '')); showSection('focus'); $('#focusStatus').textContent = 'Task: ' + t.title; toast('Focus protocol loaded: ' + t.title);}
+    function updateTimer() {const m = Math.floor(timer.seconds / 60), s = timer.seconds % 60; const text = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); $('#focusTimer').textContent = $('#miniTimer').textContent = text;}
+    function toggleTimer() {if (timer.running) {clearInterval(timer.interval); timer.running = false; $('#focusStart').textContent = $('#miniFocus').textContent = 'Resume'; $('#focusStatus').textContent = 'Paused'; return;} timer.running = true; $('#focusStart').textContent = $('#miniFocus').textContent = 'Pause'; $('#focusStatus').textContent = 'In flow'; beep(760); timer.interval = setInterval(() => {timer.seconds--; updateTimer(); if (timer.seconds <= 0) {clearInterval(timer.interval); timer.running = false; const minutes = Number($('#focusRange').value); data.sessions++; data.focusMinutes += minutes; data.focusTotal += minutes; recordActivity(minutes, timer.subject || 'Focused study'); updateXP(80); save(); renderGoal(); renderChart(); renderHeat(); renderCalendar(); $('#sessionCount').textContent = data.sessions; $('#focusStatus').textContent = 'Session complete'; $('#focusStart').textContent = $('#miniFocus').textContent = 'Start session'; toast('Excellent work — focus session complete! +80 XP'); beep(880, .15);} }, 1000);}
+    function scheduleReminder(time) {clearTimeout(window.reminderTimer); const match = String(time).trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/i); if (!match) return; let hour = +match[1], minute = +(match[2] || 0), period = (match[3] || '').toLowerCase(); if (period === 'pm' && hour < 12) hour += 12; if (period === 'am' && hour === 12) hour = 0; const now = new Date(), next = new Date(); next.setHours(hour, minute, 0, 0); if (next <= now) next.setDate(next.getDate() + 1); window.reminderTimer = setTimeout(() => {toast('Study reminder: your next small step is waiting.'); if ('Notification' in window && Notification.permission === 'granted') new Notification('Orbit study reminder', {body: 'Your next small step is waiting.'}); scheduleReminder(time);}, next - now);}
+    function setReminder() {const time = prompt('Set your daily reminder (example: 7:30 PM)', data.reminder || '7:30 PM'); if (time) {data.reminder = time; save(); scheduleReminder(time); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); $('#reminderText').textContent = time; toast('Reminder scheduled for ' + time + '.');} }
+    function stopSound() {if (soundNode) {soundNode.stop(); soundNode = null;} $$('.sound').forEach(x => x.classList.remove('active')); data.activeSound = ''; $('#ambientNow').textContent = 'No soundscape playing'; save();}
+    function playSound(kind, btn) {if (soundNode) {const same = data.activeSound === kind; stopSound(); if (same) return;} try {const ctx = audioCtx || (audioCtx = new AudioContext()); const o = ctx.createOscillator(), g = ctx.createGain(); const frequencies = {rain: 180, lofi: 220, forest: 310, cafe: 145}; o.type = kind === 'lofi' ? 'triangle' : 'sine'; o.frequency.value = frequencies[kind]; g.gain.value = .0018 + (data.volume / 100) * .035; o.connect(g).connect(ctx.destination); o.start(); soundNode = o; data.activeSound = kind; btn.classList.add('active'); $('#ambientNow').textContent = btn.innerText.trim().split('\n')[0] + ' is playing'; save(); toast(kind[0].toUpperCase() + kind.slice(1) + ' soundscape is playing.');} catch (e) {toast('Audio needs a browser interaction to start.');} }
+    let soundCanvasStarted = false;
+    function paintSoundCanvas(canvas, time) {const box = canvas.getBoundingClientRect(), ratio = Math.min(devicePixelRatio || 1, 2), w = Math.max(1, Math.round(box.width * ratio)), h = Math.max(1, Math.round(box.height * ratio)); if (canvas.width !== w || canvas.height !== h) {canvas.width = w; canvas.height = h;} const c = canvas.getContext('2d'), scene = canvas.dataset.scene, t = time / 1000; c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, w, h); const gradient = c.createLinearGradient(0, 0, w, h); if (scene === 'rain') {gradient.addColorStop(0, '#18294c'); gradient.addColorStop(1, '#507db6'); c.fillStyle = gradient; c.fillRect(0, 0, w, h); c.strokeStyle = 'rgba(225,244,255,.63)'; c.lineWidth = Math.max(1, ratio); for (let i = 0; i < 44; i++) {const x = ((i * 79 + t * 37) % (w + 70)) - 35, y = ((i * 43 + t * 118) % (h + 80)) - 40; c.beginPath(); c.moveTo(x, y); c.lineTo(x - 8 * ratio, y + 19 * ratio); c.stroke();} } else if (scene === 'lofi') {gradient.addColorStop(0, '#151337'); gradient.addColorStop(1, '#8b529f'); c.fillStyle = gradient; c.fillRect(0, 0, w, h); c.fillStyle = 'rgba(255,205,122,.84)'; c.beginPath(); c.arc(w * .72, h * .3, Math.min(w, h) * .16, 0, Math.PI * 2); c.fill(); c.fillStyle = 'rgba(255,255,255,.2)'; for (let i = 0; i < 22; i++) {const x = (i * 53) % w, y = (i * 31) % h; c.fillRect(x, (y + t * 12) % (h * .72), 2 * ratio, 2 * ratio);} c.fillStyle = 'rgba(17,16,45,.75)'; c.fillRect(0, h * .73, w, h * .27); for (let i = 0; i < 10; i++) {const bh = (18 + ((i * 19 + t * 16) % 42)) * ratio; c.fillStyle = 'rgba(187,144,245,.7)'; c.fillRect(i * w / 10 + 5, h - bh, w / 14, bh);} } else if (scene === 'forest') {gradient.addColorStop(0, '#123c3f'); gradient.addColorStop(1, '#4ca67b'); c.fillStyle = gradient; c.fillRect(0, 0, w, h); c.fillStyle = 'rgba(8,50,40,.45)'; for (let i = 0; i < 8; i++) {const x = i * w / 7; c.beginPath(); c.moveTo(x, h); c.lineTo(x + w * .13, h * .2); c.lineTo(x + w * .25, h); c.fill();} for (let i = 0; i < 18; i++) {c.fillStyle = 'rgba(192,255,196,.42)'; const x = (i * 73 + t * 9) % w, y = (i * 29 + Math.sin(t + i) * 12) % h; c.beginPath(); c.arc(x, y, 2 * ratio, 0, Math.PI * 2); c.fill();} } else {gradient.addColorStop(0, '#53321e'); gradient.addColorStop(1, '#d08b47'); c.fillStyle = gradient; c.fillRect(0, 0, w, h); for (let i = 0; i < 10; i++) {const x = (i * 67 + t * 7) % w, y = (i * 39) % h, r = (8 + (i % 4) * 5) * ratio; c.fillStyle = 'rgba(255,225,168,.18)'; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();} c.fillStyle = 'rgba(40,22,15,.72)'; c.fillRect(0, h * .72, w, h * .28); c.fillStyle = 'rgba(255,222,161,.3)'; c.fillRect(w * .13, h * .37, w * .34, h * .04);} }
+    function startSoundCanvases() {if (soundCanvasStarted) return; soundCanvasStarted = true; const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches; const draw = time => {if ($('#sound').classList.contains('active') || reduced) $$('.sound-canvas').forEach(canvas => paintSoundCanvas(canvas, time)); if (!reduced) requestAnimationFrame(draw);}; requestAnimationFrame(draw);}
+    $$('.nav,[data-section]').forEach(b => b.addEventListener('click', e => {if (b.dataset.section) showSection(b.dataset.section)}));
+    $('#themeToggle').onclick = $('#settingsTheme').onclick = () => {data.theme = data.theme === 'dark' ? 'light' : 'dark'; save(); setTheme();};
+    $('#audioToggle').onchange = e => {data.audio = e.target.checked; save(); toast('Audio FX ' + (data.audio ? 'on' : 'off'));};
+    $('#reminderBtn').onclick = $('#settingsReminder').onclick = setReminder;
+    $('#quickAdd').onclick = $('#plannerAdd').onclick = focusQuickTask;
+    $('#quickTaskForm').onsubmit = e => {e.preventDefault(); if (addTask($('#quickTaskTitle').value, $('#quickTaskSubject').value, $('#quickTaskMinutes').value)) {e.target.reset(); $('#quickTaskMinutes').value = 25; $('#quickTaskTitle').focus();} };
+    document.addEventListener('click', e => {
+      const d = e.target.closest('[data-done]'); if (d) {let t = data.tasks.find(x => x.id === +d.dataset.done); t.done = d.checked; if (t.done) {updateXP(25); recordActivity(parseInt(t.meta) || 25, subjectFrom(t.meta)); beep(710)} save(); renderTodos(); renderChart(); renderHeat(); renderAchievements();}
+      const ed = e.target.closest('[data-edit-task]'); if (ed) editTask(+ed.dataset.editTask);
+      const f = e.target.closest('[data-focus-task]'); if (f) startFocusFor(data.tasks.find(x => x.id === +f.dataset.focusTask));
+      const af = e.target.closest('[data-assignment-focus]'); if (af) startFocusFor({title: data.assignments.find(x => x.id === +af.dataset.assignmentFocus).title});
+      const del = e.target.closest('[data-delete-assignment]'); if (del) {data.assignments = data.assignments.filter(x => x.id !== +del.dataset.deleteAssignment); save(); renderAssignments();}
+      const n = e.target.closest('[data-note]'); if (n) {data.selectedNote = +n.dataset.note; renderNotes();}
+      const de = e.target.closest('[data-delete-course]'); if (de) {data.courses.splice(+de.dataset.deleteCourse, 1); save(); renderCourses();}
+      const el = e.target.closest('[data-element]'); if (el) {chooseElement(+el.dataset.element); save(); sessionStorage.chemistrySeen = 'yes'; renderAchievements();}
+      const ce = e.target.closest('[data-calendar-event]'); if (ce) {if (confirm('Remove this calendar block?')) {data.calendar = data.calendar.filter(x => x.id !== +ce.dataset.calendarEvent); save(); renderCalendar();} }
+      const slot = e.target.closest('[data-calendar-slot]'); if (slot) {const [day, hour] = slot.dataset.calendarSlot.split('|'); const title = prompt('What would you like to plan?', 'Focus session'); if (title) addCalendarBlock(day, hour, title, 'study');}
+    });
+    $('#miniFocus').onclick = $('#focusStart').onclick = toggleTimer; $('#focusReset').onclick = () => {clearInterval(timer.interval); timer.running = false; timer.seconds = Number($('#focusRange').value) * 60; updateTimer(); $('#focusStart').textContent = $('#miniFocus').textContent = 'Start session'; $('#focusStatus').textContent = 'Ready';};
+    $('#focusRange').oninput = e => {if (!timer.running) {timer.seconds = +e.target.value * 60; updateTimer();} $('#focusRangeVal').textContent = e.target.value;};
+    $('#editProtocol').onclick = () => {const current = $('#protocolText').innerText; const text = prompt('Edit your focus protocol', current); if (text) {$('#protocolText').innerHTML = text.split('\n').map(x => '<p>' + esc(x) + '</p>').join(''); toast('Focus protocol refreshed.');} };
+    $('#assignmentForm').onsubmit = e => {e.preventDefault(); data.assignments.push({id: Date.now(), title: $('#assignmentName').value, date: $('#assignmentDate').value, type: $('#assignmentType').value}); e.target.reset(); save(); renderAssignments(); toast('Deadline added.');};
+    $('#newNote').onclick = () => {const note = {id: Date.now(), title: 'Untitled lesson', body: '', updated: 'Now'}; data.notes.unshift(note); data.selectedNote = note.id; save(); renderNotes(); $('#noteTitle').focus();};
+    function saveCurrentNote() {const n = data.notes.find(x => x.id === data.selectedNote); if (!n) return; n.title = $('#noteTitle').value || 'Untitled lesson'; n.body = $('#noteBody').value; n.updated = 'Just now'; save(); renderNotes();}
+    $('#saveNote').onclick = () => {saveCurrentNote(); toast('Note saved.');}; $('#noteTitle').oninput = $('#noteBody').oninput = () => {clearTimeout(window.noteSave); window.noteSave = setTimeout(saveCurrentNote, 500);};
+    $('#shareNote').onclick = async () => {saveCurrentNote(); const n = data.notes.find(x => x.id === data.selectedNote); try {await navigator.clipboard.writeText(n.title + '\n\n' + n.body); sessionStorage.noteShared = 'yes'; renderAchievements(); toast('Note copied — ready to send to students.');} catch (e) {toast('Note saved. Copy sharing may require HTTPS.');} };
+    $$('.toolbar [data-format]').forEach(b => b.onclick = () => {const area = $('#noteBody'), start = area.selectionStart, end = area.selectionEnd, selected = area.value.slice(start, end), kind = b.dataset.format; let insert = selected, nextStart = start, nextEnd = end; if (kind === 'bold') {insert = '**' + (selected || 'important idea') + '**'; nextStart = start + 2; nextEnd = nextStart + (selected || 'important idea').length;} if (kind === 'bullet') {insert = '• ' + (selected || 'New point'); nextStart = start + 2; nextEnd = nextStart + (selected || 'New point').length;} if (kind === 'heading') {insert = '\n## ' + (selected || 'Lesson heading') + '\n'; nextStart = start + 4; nextEnd = nextStart + (selected || 'Lesson heading').length;} if (kind === 'template') {insert = '\nLesson goal:\n\nKey idea:\n\nPractice question:\n\nTakeaway:\n'; nextStart = start + 1; nextEnd = nextStart;} area.setRangeText(insert, start, end, 'end'); area.focus(); area.setSelectionRange(nextStart, nextEnd); saveCurrentNote();});
+    function planCalendarBlock() {const title = prompt('Plan a study, class, or deadline block:', 'Focus session'); if (!title) return; const day = prompt('Day number: 0 Sunday through 6 Saturday', String(new Date().getDay())); const hour = prompt('Start hour: 8 through 20', '16'); if (day === null || hour === null) return; addCalendarBlock(Math.max(0, Math.min(6, +day || 0)), Math.max(8, Math.min(20, +hour || 16)), title, 'study');}
+    $('#calendarAdd').onclick = planCalendarBlock; $('#applySuggestion').onclick = () => {const next = data.tasks.find(t => !t.done); addCalendarBlock(new Date().getDay(), 16, next ? next.title : '25-minute review', 'study');};
+    $('#publishLesson').onclick = () => {saveCurrentNote(); const n = data.notes.find(x => x.id === data.selectedNote); if (!n) return; data.classPosts.unshift({id: Date.now(), title: n.title, preview: n.body.slice(0, 140) || (n.title + ' is ready for your students.'), when: 'just now'}); save(); renderClassroom(); sessionStorage.noteShared = 'yes'; renderAchievements(); toast('Lesson published to your local class board.');};
+    $('#startCircle').onclick = () => {timer.subject = 'Study circle'; showSection('focus'); $('#focusStatus').textContent = 'Study circle is ready'; toast('Your local study circle focus block is ready.');};
+    $('#addCourse').onclick = () => {data.courses.push({name: 'New course', credits: 3, grade: 'A'}); save(); renderCourses();};
+    document.addEventListener('change', e => {let m = e.target.dataset; if (m.courseName !== undefined) data.courses[m.courseName].name = e.target.value; if (m.courseCredit !== undefined) data.courses[m.courseCredit].credits = e.target.value; if (m.courseGrade !== undefined) data.courses[m.courseGrade].grade = e.target.value; if (m.courseName !== undefined || m.courseCredit !== undefined || m.courseGrade !== undefined) {save(); calcGpa();} });
+    $('#randomElement').onclick = () => {chooseElement(Math.floor(Math.random() * elements.length)); save();};
+    $('#atomModel').onclick = () => {const atom = $('#atomCanvas'); atom.classList.toggle('is-expanded'); $('#elementHistory').scrollIntoView({behavior: 'smooth', block: 'nearest'}); toast($('#elementName').textContent + ' atom model selected.');};
+    $('#elementSearch').oninput = e => renderElements(e.target.value); $('#clearElementSearch').onclick = () => {$('#elementSearch').value = ''; renderElements();};
+    $('#flashOptions').onclick = e => {const b = e.target.closest('[data-answer]'); if (!b) return; const f = flashcards[flashIndex % flashcards.length], history = data.flashHistory || {correct: 0, answered: 0}; $$('.option').forEach(x => {x.disabled = true; if (x.dataset.answer === f.a) x.classList.add('correct')}); history.answered++; if (b.dataset.answer === f.a) {flashScore++; history.correct++; history.weakTopic = ''; $('#flashFeedback').textContent = 'Correct — great recall!'; beep(840); updateXP(15);} else {history.weakTopic = f.topic; $('#flashFeedback').textContent = 'Not quite — ' + f.topic + ' will return for another try.'; b.classList.add('wrong'); beep(240);} data.flashHistory = history; save(); $('#flashScore').textContent = flashScore; const mastery = Math.round(history.correct / history.answered * 100); $('#flashProgress').style.width = mastery + '%'; $('#flashMastery').textContent = mastery + '%'; $('#nextFlash').classList.remove('hidden');};
+    $('#nextFlash').onclick = () => {const weak = data.flashHistory?.weakTopic; flashIndex = weak ? (flashcards.findIndex(f => f.topic === weak) + 1) % flashcards.length : (flashIndex + 1) % flashcards.length; renderFlash();};
+    $$('.sound').forEach(b => b.onclick = () => playSound(b.dataset.sound, b));
+    $('#soundVolume').oninput = e => {data.volume = +e.target.value; $('#soundVolumeValue').textContent = data.volume + '%'; save(); if (soundNode) {stopSound(); toast('Volume saved. Start a soundscape to apply it.');} }; $('#stopSound').onclick = () => {stopSound(); toast('Soundscape stopped.');};
+    $('#syncBtn').onclick = () => {const cloud = Boolean(window.orbitCloud?.isReady); save(); updateSync(cloud ? 'Syncing to your account…' : 'Saved locally'); setTimeout(() => {updateSync(cloud ? 'Synced to your account' : 'Local only'); toast(cloud ? 'Workspace synced to your account.' : 'Workspace saved in this browser.');}, 350);};
+    $('#exportBtn').onclick = () => {save(); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'})); a.download = 'orbit-workspace.json'; a.click(); URL.revokeObjectURL(a.href); toast('Workspace export downloaded.');};
+    $('#importFile').onchange = e => {const file = e.target.files[0]; if (!file) return; const r = new FileReader(); r.onload = () => {try {data = hydrate(JSON.parse(r.result)); save(); renderAll(); toast('Workspace imported successfully.');} catch (err) {toast('That file is not a valid Orbit export.');} }; r.readAsText(file);};
+    $('#resetBtn').onclick = () => {if (confirm('Factory reset will erase all Orbit data in this browser. Continue?')) {localStorage.removeItem('orbit-data'); data = structuredClone(defaultData); save(); renderAll(); toast('Factory reset complete.');} };
+    $('#searchInput').oninput = e => {const q = e.target.value.toLowerCase().trim(); if (!q) return; const task = data.tasks.find(t => (t.title + ' ' + t.meta).toLowerCase().includes(q)); const note = data.notes.find(n => (n.title + ' ' + n.body).toLowerCase().includes(q)); const element = elements.findIndex(x => (x[0] + ' ' + x[1]).toLowerCase().includes(q)); if (task) {showSection('planner'); toast('Found task: ' + task.title);} else if (note) {data.selectedNote = note.id; showSection('notes'); renderNotes(); toast('Found note: ' + note.title);} else if (element >= 0) {showSection('chemistry'); $('#elementSearch').value = q; renderElements(q); chooseElement(element); toast('Found element: ' + elements[element][1]);} };
+    let onboardingStep = 1;
+    function paintOnboarding() {const modal = $('#onboardingModal'), steps = $$('.onboarding-steps i'); steps.forEach((s, i) => s.classList.toggle('active', i < onboardingStep)); modal.classList.remove('hidden'); if (onboardingStep === 1) {$('#onboardingTitle').textContent = 'Let’s shape your study space.'; $('#onboardingCopy').textContent = 'Tell Orbit who you are. You can change this anytime.'; $('#onboardingFields').innerHTML = '<input class="field" id="onboardName" placeholder="Your first name" maxlength="28" value="' + esc(data.profile.name || '') + '"><select class="field" id="onboardRole"><option value="Student">Student</option><option value="Teacher">Teacher</option><option value="Both">Student & teacher</option></select>'; $('#onboardRole').value = data.profile.role || 'Student'; $('#nextOnboarding').textContent = 'Continue';} else if (onboardingStep === 2) {$('#onboardingTitle').textContent = 'Set one meaningful target.'; $('#onboardingCopy').textContent = 'Orbit will use it to frame your daily focus goal.'; $('#onboardingFields').innerHTML = '<label class="muted tiny">Daily focus target</label><select class="field" id="onboardGoal"><option value="120">2 hours · sustainable</option><option value="180">3 hours · ambitious</option><option value="240">4 hours · deep work</option></select><label class="muted tiny">Workspace appearance</label><select class="field" id="onboardTheme"><option value="light">Light mode</option><option value="dark">Dark mode</option></select>'; $('#onboardGoal').value = data.focusTarget; $('#onboardTheme').value = data.theme; $('#nextOnboarding').textContent = 'Finish setup';} else {$('#onboardingTitle').textContent = 'You’re ready to make progress.'; $('#onboardingCopy').textContent = 'Start with your planner, use a focus block, then let your real activity build the analytics.'; $('#onboardingFields').innerHTML = '<div class="notice"><span>✦</span><div><strong>Your workspace is private on this device.</strong><p>Export it anytime, or connect a hosted backend later for accounts and cross-device sync.</p></div></div>'; $('#nextOnboarding').textContent = 'Open Orbit';} }
+    function advanceOnboarding() {if (onboardingStep === 1) {const name = $('#onboardName').value.trim(); if (!name) {$('#onboardName').focus(); return;} data.profile.name = name; data.profile.role = $('#onboardRole').value; onboardingStep = 2; paintOnboarding(); return;} if (onboardingStep === 2) {data.focusTarget = Number($('#onboardGoal').value); data.theme = $('#onboardTheme').value; onboardingStep = 3; setTheme(); paintOnboarding(); return;} data.profile.onboarded = true; save(); renderAll(); $('#onboardingModal').classList.add('hidden'); toast('Your Orbit workspace is ready.');}
+    $('#nextOnboarding').onclick = advanceOnboarding; $('#skipOnboarding').onclick = () => {data.profile.onboarded = true; save(); $('#onboardingModal').classList.add('hidden');};
+    $('#profileBtn').onclick = () => {onboardingStep = 1; paintOnboarding();};
+    if (syncChannel) syncChannel.onmessage = e => {data = hydrate(e.data); renderAll(); updateSync('Updated from another tab');};
+    window.addEventListener('storage', e => {if (e.key === 'orbit-data' && e.newValue) {data = hydrate(JSON.parse(e.newValue)); renderAll(); updateSync('Updated from another tab');} });
+    window.addEventListener('orbit:cloud-data', event => {data = hydrate(event.detail); renderAll(); if (data.profile.onboarded) $('#onboardingModal').classList.add('hidden'); else paintOnboarding(); updateSync('Synced to your account');});
+    window.addEventListener('orbit:cloud-empty', () => {save();});
+    window.addEventListener('orbit:auth-user', event => {const user = event.detail; window.orbitPreviewMode = false; if (user.displayName) data.profile.name = user.displayName.split(' ')[0]; data.profile.email = user.email || ''; renderProfile(); renderCloudMode(); $('#signOutBtn').classList.remove('hidden');});
+    $('#signOutBtn').onclick = () => window.orbitCloud?.signOut?.();
+    $('#localPreviewBtn').onclick = () => {window.orbitPreviewMode = true; document.body.classList.remove('auth-locked'); $('#authGate').classList.add('hidden'); renderAll(); if (!data.profile.onboarded) paintOnboarding(); toast('Local preview mode is ready. Your work stays in this browser.');};
+    renderAll(); updateTimer(); if (data.reminder) scheduleReminder(data.reminder); const hash = location.hash.slice(1); if (hash && $('#' + hash)) showSection(hash); if (!data.profile.onboarded) paintOnboarding(); startSoundCanvases();
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./sw.js').catch(() => { });
+  </script>
+  <script type="module" src="./firebase-auth.js"></script>
+</body>
+
+</html>
